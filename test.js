@@ -1,14 +1,9 @@
-var obj = {
-    a: 2
-};
-
 /**
  * OLOLO
- * @param obj [human]
+ * @param fuck
  * @returns {number}
  */
-function test(obj) {
-    if (obj.a) {
-        return obj.a;
-    }
+function erer(fuck) {
+    fuck.bbbbbbbbbbbb.ccccccccccccccc.dddddddddd = 45;
+    return 4545;
 }

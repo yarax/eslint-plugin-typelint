@@ -3,4 +3,4 @@
     node: true
     es6: true
   rules:
-    fuck: 2
+    doctype: 2

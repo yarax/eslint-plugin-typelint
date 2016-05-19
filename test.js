@@ -1,9 +1,10 @@
 /**
  * OLOLO
- * @param fuck
+ * @param man [human]
+ * @param {Boolean} flag
  * @returns {number}
  */
-function erer(fuck) {
-    fuck.bbbbbbbbbbbb.ccccccccccccccc.dddddddddd = 45;
+function erer(man, flag) {
+    man.bbbbbbbbbbbb.ccccccccccccccc.dddddddddd = 45;
     return 4545;
 }

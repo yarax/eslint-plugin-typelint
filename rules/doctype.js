@@ -53,14 +53,6 @@ function validateAccess(props, schema, i) {
   }
 }
 
-function lookUpConfig(dir) {
-  var found = fs.readdirSync(dir).some(function (file) {
-    return !!file.match(/eslintrc/);
-  });
-  if (found) return dir;
-  else return lookUpConfig + '/..';
-}
-
 function collectAllSchemas(path, collected) {
   var stat = fs.statSync(path);
   if (stat.isFile()) {
@@ -92,8 +84,7 @@ function loadShemas(settings) {
   if (!settings) {
     throw new Error('Please provide settings section with models in your eslint config');
   }
-  var modelsDir = lookUpConfig(__dirname + '/..') + '/' + settings.modelsDir;
-  schemas = collectAllSchemas(modelsDir, {});
+  schemas = collectAllSchemas(settings.modelsDir, {});
 }
 
 module.exports = function (context) {

@@ -1,6 +1,6 @@
 var schemas;
 var fs = require('fs');
-var commentable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
+var commentable = ['VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
 
 function parseComments(commentString) {
   var m = commentString.match(/@param\s*(.*?)\n/g);

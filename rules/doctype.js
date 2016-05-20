@@ -65,10 +65,26 @@ function loadShemas(settings) {
   if (!settings) {
     throw new Error('Please provide settings section with models in your eslint config');
   }
+  function setSchema(path, file, prev) {
+    var modelName = file.replace(/\.[a-zA-Z]+$/, '');
+    prev[modelName] = require(path);
+    return prev;
+  }
   var modelsDir = lookUpConfig(__dirname + '/..') + '/' + settings.modelsDir;
   schemas = fs.readdirSync(modelsDir).reduce(function (prev, file) {
-    var modelName = file.replace(/\.[a-zA-Z]+$/, '');
-    prev[modelName] = require(modelsDir + '/' + file);
+    var stat = fs.statSync(modelsDir + '/' + file);
+    var path;
+    if (!stat.isFile()) {
+      path = modelsDir + '/' + file + '/v1/definitions/';
+      prev = fs.readdirSync(path).reduce(function (prev2, file2) {
+        prev2 = setSchema(path + '/' + file2, file2, prev2);
+        return prev2;
+      }, prev);
+    } else {
+      path = modelsDir + '/' + file;
+      prev = setSchema(path, file, prev);
+    }
+
     return prev;
   }, {});
 }

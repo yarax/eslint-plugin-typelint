@@ -5,4 +5,5 @@
   rules:
     doctype: 2
   settings:
-    modelsDir: ./models
+    modelsDir: './node_modules/ms_config/swagger'
+    nestedSubDir: '/v1/definitions'

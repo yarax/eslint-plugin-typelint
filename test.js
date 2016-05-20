@@ -1,6 +1,6 @@
 /**
  * OLOLO
- * @param man [human]
+ * @param man [user]
  * @param {Boolean} flag
  * @returns {number}
  */

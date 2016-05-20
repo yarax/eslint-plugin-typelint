@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "babylon": "^6.8.0",
-    "eslint": "^2.10.2"
+    "eslint": "^2.10.2",
+    "js-yaml": "^3.6.1"
   }
 }

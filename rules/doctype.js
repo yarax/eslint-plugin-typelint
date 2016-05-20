@@ -61,32 +61,39 @@ function lookUpConfig(dir) {
   else return lookUpConfig + '/..';
 }
 
+function collectAllSchemas(path, collected) {
+  var stat = fs.statSync(path);
+  if (stat.isFile()) {
+    return setSchema(path, collected);
+  }
+  return fs.readdirSync(path).reduce(function (obj, file) {
+    obj = collectAllSchemas(path + '/' + file, obj);
+    return obj;
+  }, collected);
+}
+
+function setSchema(path, prev) {
+  var m = path.match(/\/([^\/]+)$/);
+  var file = m[1];
+  var ext = file.match(/\.([a-zA-Z0-9]+)$/);
+  if (!ext) return prev;
+  ext = ext[0];
+  var modelName = file.replace(ext, '');
+  if (ext === '.yaml' || ext === '.yml') {
+    var str = fs.readFileSync(path).toString();
+    prev[modelName] = require('js-yaml').safeLoad(str);
+  } else if (ext === '.json' || ext === '.js') {
+    prev[modelName] = require(path);
+  }
+  return prev;
+}
+
 function loadShemas(settings) {
   if (!settings) {
     throw new Error('Please provide settings section with models in your eslint config');
   }
-  function setSchema(path, file, prev) {
-    var modelName = file.replace(/\.[a-zA-Z]+$/, '');
-    prev[modelName] = require(path);
-    return prev;
-  }
   var modelsDir = lookUpConfig(__dirname + '/..') + '/' + settings.modelsDir;
-  schemas = fs.readdirSync(modelsDir).reduce(function (prev, file) {
-    var stat = fs.statSync(modelsDir + '/' + file);
-    var path;
-    if (!stat.isFile()) {
-      path = modelsDir + '/' + file + '/v1/definitions/';
-      prev = fs.readdirSync(path).reduce(function (prev2, file2) {
-        prev2 = setSchema(path + '/' + file2, file2, prev2);
-        return prev2;
-      }, prev);
-    } else {
-      path = modelsDir + '/' + file;
-      prev = setSchema(path, file, prev);
-    }
-
-    return prev;
-  }, {});
+  schemas = collectAllSchemas(modelsDir, {});
 }
 
 module.exports = {
@@ -103,9 +110,17 @@ module.exports = {
             scope.typedVars.forEach(function (param) {
               if (param.varName !== node.object.name) return;
               var schema = schemas[param.type];
+              if (!schema) {
+                context.report(node, 'Unknown schema and object type ' + param.type);
+                return;
+              }
+              if (!schema.properties) {
+                context.report(node, 'Wrong schema ' + param.type + '. No properties');
+                return;
+              }
               var valid = validateAccess(scope.props, schema, 0);
               if (valid !== null) {
-                context.report(node, 'Invalid access to property ' + valid + ' in variable');
+                context.report(node, 'Invalid access to property ' + valid + ' in variable ' + param.type);
               }
             });
           }

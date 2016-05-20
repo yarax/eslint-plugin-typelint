@@ -47,7 +47,7 @@ function traverseScope(node, scope) {
 function validateAccess(props, schema, i) {
   if (!props[i]) return null;
   if (schema.properties[props[i]]) {
-    return validateAccess(props, schema.properties[props[i]], i+1);
+    return validateAccess(props, schema.properties[props[i]], i + 1);
   } else {
     return props[i];
   }
@@ -96,36 +96,34 @@ function loadShemas(settings) {
   schemas = collectAllSchemas(modelsDir, {});
 }
 
-module.exports = {
-  create: (context) => {
-    loadShemas(context.settings);
-    return {
-      MemberExpression: function(node) {
-        if (node.object && node.object.name) {
-          var scope = traverseScope(node, {
-            props: [],
-          });
+module.exports = function (context) {
+  loadShemas(context.settings);
+  return {
+    MemberExpression: function (node) {
+      if (node.object && node.object.name) {
+        var scope = traverseScope(node, {
+          props: [],
+        });
 
-          if (scope.props.length && scope.typedVars) {
-            scope.typedVars.forEach(function (param) {
-              if (param.varName !== node.object.name) return;
-              var schema = schemas[param.type];
-              if (!schema) {
-                context.report(node, 'Unknown schema and object type ' + param.type);
-                return;
-              }
-              if (!schema.properties) {
-                context.report(node, 'Wrong schema ' + param.type + '. No properties');
-                return;
-              }
-              var valid = validateAccess(scope.props, schema, 0);
-              if (valid !== null) {
-                context.report(node, 'Invalid access to property ' + valid + ' in variable ' + param.type);
-              }
-            });
-          }
+        if (scope.props.length && scope.typedVars) {
+          scope.typedVars.forEach(function (param) {
+            if (param.varName !== node.object.name) return;
+            var schema = schemas[param.type];
+            if (!schema) {
+              context.report(node, 'Unknown schema and object type ' + param.type);
+              return;
+            }
+            if (!schema.properties) {
+              context.report(node, 'Wrong schema ' + param.type + '. No properties');
+              return;
+            }
+            var valid = validateAccess(scope.props, schema, 0);
+            if (valid !== null) {
+              context.report(node, 'Invalid access to property ' + valid + ' in variable ' + param.type);
+            }
+          });
         }
       }
-    };
-  }
+    }
+  };
 }

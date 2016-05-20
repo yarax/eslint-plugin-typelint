@@ -1,5 +1,6 @@
 var schemas;
 var fs = require('fs');
+var commentable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
 
 function parseComments(commentString) {
   var m = commentString.match(/@param\s*(.*?)\n/g);
@@ -27,16 +28,27 @@ function parseComments(commentString) {
 }
 
 function traverseScope(node, scope) {
-  if (node.type === 'FunctionDeclaration' && node.leadingComments) {
+  if (commentable.indexOf(node.type) !== -1 && node.leadingComments) {
     scope.typedVars = parseComments(node.leadingComments[0].value);
   }
+  var cache = [];
+  var val = JSON.stringify(node, function(key, value) {
+    if (typeof value === 'object' && value !== null) {
+      if (cache.indexOf(value) !== -1) {
+        // Circular reference found, discard key
+        return;
+      }
+      // Store value in our collection
+      cache.push(value);
+    }
+    return value;
+  });
 
   if (node.type === 'MemberExpression' && node.property) {
     scope.props.push(node.property.name);
   }
 
   if (node.parent) {
-    console.log(node.parent.type, node.parent.property && node.parent.property.name);
     return traverseScope(node.parent, scope);
   } else {
     return scope;
@@ -81,7 +93,7 @@ function setSchema(path, prev) {
 }
 
 function loadShemas(settings) {
-  if (!settings) {
+  if (!settings || !settings.modelsDir) {
     throw new Error('Please provide settings section with models in your eslint config');
   }
   schemas = collectAllSchemas(settings.modelsDir, {});
@@ -95,7 +107,7 @@ module.exports = function (context) {
         var scope = traverseScope(node, {
           props: [],
         });
-
+        //throw new Error(JSON.stringify(scope));
         if (scope.props.length && scope.typedVars) {
           scope.typedVars.forEach(function (param) {
             if (param.varName !== node.object.name) return;

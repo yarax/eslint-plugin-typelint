@@ -4,3 +4,5 @@
     es6: true
   rules:
     doctype: 2
+  settings:
+    modelsDir: ./models

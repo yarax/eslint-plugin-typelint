@@ -1,6 +1,6 @@
-var schemas = {
-  human: require('../models/human.json')
-}
+var schemas;
+var fs = require('fs');
+
 function parseComments(commentString) {
   var m = commentString.match(/@param\s*(.*?)\n/g);
   if (m) {
@@ -53,8 +53,29 @@ function validateAccess(props, schema, i) {
   }
 }
 
+function lookUpConfig(dir) {
+  var found = fs.readdirSync(dir).some(function (file) {
+    return !!file.match(/eslintrc/);
+  });
+  if (found) return dir;
+  else return lookUpConfig + '/..';
+}
+
+function loadShemas(settings) {
+  if (!settings) {
+    throw new Error('Please provide settings section with models in your eslint config');
+  }
+  var modelsDir = lookUpConfig(__dirname + '/..') + '/' + settings.modelsDir;
+  schemas = fs.readdirSync(modelsDir).reduce(function (prev, file) {
+    var modelName = file.replace(/\.[a-zA-Z]+$/, '');
+    prev[modelName] = require(modelsDir + '/' + file);
+    return prev;
+  }, {});
+}
+
 module.exports = {
   create: (context) => {
+    loadShemas(context.settings);
     return {
       MemberExpression: function(node) {
         if (node.object && node.object.name) {

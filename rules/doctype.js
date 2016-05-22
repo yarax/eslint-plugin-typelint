@@ -1,6 +1,8 @@
 var schemas;
 var fs = require('fs');
 var commentable = ['VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
+var functinable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'];
+var assignable = ['VariableDeclaration'];
 
 function parseComments(commentString) {
   var m = commentString.match(/@param\s*(.*?)\n/g);
@@ -27,9 +29,39 @@ function parseComments(commentString) {
   }
 }
 
+
+function searchForAssignments(node, scope) {
+  console.log("FUNC!", require('util').inspect(node, {depth: 7}));
+  if (assignable.indexOf(node.type) !== -1) {
+    //searchForAssignments(require('util').inspect(node.body, {depth: 5}));
+    node.declarations.forEach(function (declaration) {
+      var fromVar, newVar;
+      if (declaration.init === 'Identifier') {
+        var newVar = declaration.id.name;
+        fromVar = declaration.init.name;
+      }
+      if (declaration.init === 'MemberExpression') {
+        fromVar = declaration.init.object.name;
+        if (scope.typedVars) {
+          scope.typedVars
+        }
+      }
+    });
+  }
+}
+
+/**
+ *
+ * @param node
+ * @param scope
+ * @returns {Object} scope {typedVars: [{varName: 'a', type: 'user'}, {..}], props: ['a', 'b']}
+ */
 function traverseScope(node, scope) {
   if (commentable.indexOf(node.type) !== -1 && node.leadingComments) {
     scope.typedVars = parseComments(node.leadingComments[0].value);
+  }
+  if (functinable.indexOf(node.type) !== -1) {
+    searchForAssignments(node.body, scope);
   }
   var cache = [];
   if (node.type === 'MemberExpression' && node.property) {

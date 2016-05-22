@@ -4,7 +4,7 @@
  * @param {Boolean} flag
  * @returns {number}
  */
-function erer(man, flag) {
-    man.bbbbbbbbbbbb.ccccccccccccccc.dddddddddd = 45;
-    return 4545;
+const convertShopToClient = (man, flag) => {
+    var zoko = man[0];
+    zoko.bbbbb = 123;
 }

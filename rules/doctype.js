@@ -1,7 +1,7 @@
 var schemas;
 var adapters;
 var fs = require('fs');
-var commentable = ['VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
+var commentable = ['ExpressionStatement', 'VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
 var functinable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'];
 var assignable = ['VariableDeclaration'];
 
@@ -106,20 +106,22 @@ function searchForAssignments(node, scope) {
  * @returns {Object} scope {typedVars: [{varName: 'a', type: 'user'}, {..}], props: ['a', 'b']}
  */
 function traverseScope(node, scope) {
-  //console.log(node.type, node.leadingComments);
+  console.log(node.type, node.leadingComments);
   // Collect all comments with types
-  if (commentable.indexOf(node.type) !== -1 && node.leadingComments) {
+  if (/*commentable.indexOf(node.type) !== -1 && */node.leadingComments) {
     var comments = parseComments(node.leadingComments[0].value);
     // @TODO prevent similar typedVars
     scope.typedVars = scope.typedVars.concat(comments);
-    if (scope.functionNode) {
-      scope = searchForAssignments(scope.functionNode, scope);
-    }
   }
   // Look up nearest function scope and exit
   if (functinable.indexOf(node.type) !== -1) {
     scope.functionNode = node.body;
   }
+
+  if (scope.typedVars.length && scope.functionNode) {
+    scope = searchForAssignments(scope.functionNode, scope);
+  }
+
   if (node.type === 'MemberExpression' && node.property) {
     scope.props.push(node.property.name);
   }

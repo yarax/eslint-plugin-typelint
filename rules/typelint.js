@@ -1,6 +1,7 @@
 var schemas;
 var adapters;
 var fs = require('fs');
+var nodePath = require('path');
 var commentable = ['VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
 var functinable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'];
 var assignable = ['VariableDeclaration'];
@@ -149,6 +150,9 @@ function validateAccess(props, schema, i) {
 }
 
 function collectAllSchemas(path, collected) {
+  if (!nodePath.isAbsolute(path)) {
+    path = process.cwd() + '/' + path;
+  }
   var stat = fs.statSync(path);
   if (stat.isFile()) {
     return setSchema(path, collected);
@@ -189,13 +193,16 @@ function cacheSchema(schema) {
 
 function loadShemas(settings) {
   if (!settings || !settings.modelsDir) {
-    throw new Error('Please provide settings section with models in your eslint config');
+    throw new Error('Please provide settings.typelint section with models in your eslint config');
   }
   adapters = settings.adapters.map(function (adapterName) {
     return require('../adapters/' + adapterName)
   });
-  schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}));
-  //schemas = collectAllSchemas(settings.modelsDir, {});
+  if (settings.useCache) {
+    schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}));
+  } else {
+    schemas = collectAllSchemas(settings.modelsDir, {});
+  }
 }
 
 /**
@@ -250,10 +257,8 @@ function handleMemberExpressions(context, node) {
   }
 }
 
-var start = Date.now();
-
 module.exports = function (context) {
-  loadShemas(context.settings);
+  loadShemas(context.settings && context.settings.typelint);
   return {
     MemberExpression: handleMemberExpressions.bind(null, context)
   };

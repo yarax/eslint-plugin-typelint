@@ -1,15 +1,14 @@
 {
-  "name": "doctype",
+  "name": "typelint",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "keywords": ["jsdoc", "eslint", "types"],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babylon": "^6.8.0",
     "eslint": "^2.10.2",
     "js-yaml": "^3.6.1"
   }

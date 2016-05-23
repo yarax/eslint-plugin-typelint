@@ -3,10 +3,10 @@ const b = 43535;
 const util = require('util');
 /**
  * OLOLO
- * @param man [shop]
+ * @param man [human]
  * @param {Boolean} flag
  * @returns {number}
  */
 const convertShopToClient = (man, flag) => {
-  man.data.integration_type = 34;
+  man.age = 34;
 }

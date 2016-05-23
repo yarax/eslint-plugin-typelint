@@ -107,20 +107,21 @@ function searchForAssignments(node, scope) {
  * @returns {Object} scope {typedVars: [{varName: 'a', type: 'user'}, {..}], props: ['a', 'b']}
  */
 function traverseScope(node, scope) {
-  //console.log(node.type, node.leadingComments);
   // Collect all comments with types
   if (commentable.indexOf(node.type) !== -1 && node.leadingComments) {
     var comments = parseComments(node.leadingComments[0].value);
     // @TODO prevent similar typedVars
     scope.typedVars = scope.typedVars.concat(comments);
-    if (scope.functionNode) {
-      scope = searchForAssignments(scope.functionNode, scope);
-    }
   }
   // Look up nearest function scope and exit
   if (functinable.indexOf(node.type) !== -1) {
     scope.functionNode = node.body;
   }
+
+  if (scope.functionNode && scope.typedVars) {
+    scope = searchForAssignments(scope.functionNode, scope);
+  }
+
   if (node.type === 'MemberExpression' && node.property) {
     scope.props.push(node.property.name);
   }
@@ -181,14 +182,14 @@ function setSchema(path, prev) {
 
 function getFromCache() {
   try {
-    return require('./models_cache.json');
+    return require('../cache/models.json');
   } catch(e) {
     return false;
   }
 }
 
 function cacheSchema(schema) {
-  return fs.writeFileSync(__dirname + '/models_cache.json', JSON.stringify(schema));
+  return fs.writeFileSync(__dirname + '/../cache/models.json', JSON.stringify(schema));
 }
 
 function loadShemas(settings) {

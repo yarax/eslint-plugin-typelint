@@ -5,6 +5,6 @@
  * @returns {number}
  */
 function test(man, flag) {
-    var zoko = man.firstName;
+    var zoko = man.first_name;
     zoko.wrong = true;
 }

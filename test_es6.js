@@ -1,12 +1,12 @@
 const a = 1212;
 const b = 43535;
 const util = require('util');
-const convertShopToClient = (man, flag) => {
+const convertShopToClient = (data, flag) => {
   /**
    * OLOLO
-   * @param man [shop]
+   * @param data [campaign_group.data]
    * @param {Boolean} flag
    * @returns {number}
    */
-  man.data.fuck = 34;
+  var a = data.fuck;
 }

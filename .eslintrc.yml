@@ -7,4 +7,4 @@
   settings:
     modelsDir: './node_modules/ms_config/swagger'
     adapters: ['snake_case']
-    nestedSubDir: '/v1/definitions'
+    excludeModelDirs: ['paths']

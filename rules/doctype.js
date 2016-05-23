@@ -9,7 +9,7 @@ function parseComments(commentString) {
   var m = commentString.match(/@param\s*(.*?)\n/g);
   if (m) {
     return m.map(function (paramLine) {
-      paramLine = paramLine.replace(/@param\s*/, '').replace(/\{.*?\}/, '');
+      paramLine = paramLine.replace(/@(param|typedef)\s*/, '').replace(/\{.*?\}/, '');
       var ms = paramLine.trim().split(' ');
       var varName = ms[0];
       if (!ms[1]) return null;
@@ -150,13 +150,17 @@ function validateAccess(props, schema, i) {
   }
 }
 
-function collectAllSchemas(path, collected) {
+function collectAllSchemas(path, collected, settings, fileName) {
   var stat = fs.statSync(path);
   if (stat.isFile()) {
-    return setSchema(path, collected);
+    return setSchema(path, collected, fileName);
+  } else if (fileName) {
+    if (settings.excludeModelDirs && settings.excludeModelDirs.indexOf(fileName) !== -1) {
+      return collected;
+    }
   }
-  return fs.readdirSync(path).reduce(function (obj, file) {
-    obj = collectAllSchemas(path + '/' + file, obj);
+  return fs.readdirSync(path).reduce(function (obj, fileName) {
+    obj = collectAllSchemas(path + '/' + fileName, obj, settings, fileName);
     return obj;
   }, collected);
 }
@@ -196,8 +200,8 @@ function loadShemas(settings) {
   adapters = settings.adapters.map(function (adapterName) {
     return require('../adapters/' + adapterName)
   });
-  schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}));
-  //schemas = collectAllSchemas(settings.modelsDir, {});
+  //schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}, settings));
+  schemas = collectAllSchemas(settings.modelsDir, {}, settings);
 }
 
 /**

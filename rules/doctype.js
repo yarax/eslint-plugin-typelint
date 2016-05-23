@@ -1,4 +1,5 @@
 var schemas;
+var adapters;
 var fs = require('fs');
 var commentable = ['VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
 var functinable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'];
@@ -29,24 +30,72 @@ function parseComments(commentString) {
   }
 }
 
+/**
+ * Recursively get all members
+ * @param node
+ * @param props
+ * @returns {*}
+ */
+function traverseAllMembers(node, props) {
+  if (node.type === 'MemberExpression' && node.property) {
+    props.push(node.property.name);
+  }
+  if (node.parent) {
+    return traverseAllMembers(node.parent, props);
+  } else {
+    return props;
+  }
+}
+
+function typeOfVarInScope(varName, scope) {
+  var found = null;
+  scope.typedVars.some(function (item) {
+    var eq = item.varName === varName;
+    if (eq) {
+      found = item.type;
+    }
+    return eq;
+  });
+  return found;
+}
 
 function searchForAssignments(node, scope) {
-  console.log("FUNC!", require('util').inspect(node, {depth: 7}));
   if (assignable.indexOf(node.type) !== -1) {
     //searchForAssignments(require('util').inspect(node.body, {depth: 5}));
     node.declarations.forEach(function (declaration) {
-      var fromVar, newVar;
-      if (declaration.init === 'Identifier') {
-        var newVar = declaration.id.name;
+      var fromVar;
+      var newVarType;
+      var fromVarProps;
+      if (!declaration.init || !declaration.id) return;
+      var newVar = declaration.id.name;
+      if (declaration.init.type === 'Identifier') {
         fromVar = declaration.init.name;
+        newVarType = typeOfVarInScope(fromVar, scope)
       }
-      if (declaration.init === 'MemberExpression') {
+      if (declaration.init.type === 'MemberExpression') {
         fromVar = declaration.init.object.name;
-        if (scope.typedVars) {
-          scope.typedVars
+        newVarType = typeOfVarInScope(fromVar, scope);
+        if (newVarType) {
+          fromVarProps = traverseAllMembers(declaration.init, []);
+          newVarType = typeOfVarInScope(fromVar, scope);
+          newVarType = newVarType + '.' + fromVarProps.join('.');
         }
       }
+      if (newVar && newVarType) {
+        scope.typedVars.push({
+          varName: newVar,
+          type: newVarType
+        });
+      }
     });
+    return scope;
+  } else {
+    if (Array.isArray(node.body)) {
+      scope = node.body.reduce(function (prevScope, tail) {
+        return searchForAssignments(tail, prevScope);
+      }, scope);
+    }
+    return scope;
   }
 }
 
@@ -57,17 +106,24 @@ function searchForAssignments(node, scope) {
  * @returns {Object} scope {typedVars: [{varName: 'a', type: 'user'}, {..}], props: ['a', 'b']}
  */
 function traverseScope(node, scope) {
+  //console.log(node.type, node.leadingComments);
+  // Collect all comments with types
   if (commentable.indexOf(node.type) !== -1 && node.leadingComments) {
-    scope.typedVars = parseComments(node.leadingComments[0].value);
+    var comments = parseComments(node.leadingComments[0].value);
+    // @TODO prevent similar typedVars
+    scope.typedVars = scope.typedVars.concat(comments);
+    if (scope.functionNode) {
+      scope = searchForAssignments(scope.functionNode, scope);
+    }
   }
+  // Look up nearest function scope and exit
   if (functinable.indexOf(node.type) !== -1) {
-    searchForAssignments(node.body, scope);
+    scope.functionNode = node.body;
   }
-  var cache = [];
   if (node.type === 'MemberExpression' && node.property) {
     scope.props.push(node.property.name);
   }
-
+  // If global scope
   if (node.parent) {
     return traverseScope(node.parent, scope);
   } else {
@@ -76,10 +132,17 @@ function traverseScope(node, scope) {
 }
 
 
+function adaptProp(prop) {
+  return adapters.reduce(function (prev, adaptfunc) {
+    return adaptfunc(prev);
+  }, prop);
+}
+
 function validateAccess(props, schema, i) {
   if (!props[i]) return null;
-  if (schema.properties[props[i]]) {
-    return validateAccess(props, schema.properties[props[i]], i + 1);
+  var schemaProp = adaptProp(props[i]);
+  if (schema.properties[schemaProp]) {
+    return validateAccess(props, schema.properties[schemaProp], i + 1);
   } else {
     return props[i];
   }
@@ -112,40 +175,86 @@ function setSchema(path, prev) {
   return prev;
 }
 
+function getFromCache() {
+  try {
+    return require('./models_cache.json');
+  } catch(e) {
+    return false;
+  }
+}
+
+function cacheSchema(schema) {
+  return fs.writeFileSync(__dirname + '/models_cache.json', JSON.stringify(schema));
+}
+
 function loadShemas(settings) {
   if (!settings || !settings.modelsDir) {
     throw new Error('Please provide settings section with models in your eslint config');
   }
-  schemas = collectAllSchemas(settings.modelsDir, {});
+  adapters = settings.adapters.map(function (adapterName) {
+    return require('../adapters/' + adapterName)
+  });
+  schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}));
+  //schemas = collectAllSchemas(settings.modelsDir, {});
 }
+
+/**
+ * type can be with dots
+ * @param type
+ */
+function getSchemaByType(type) {
+  if (type.match(/\./)) {
+    var props = type.split('.');
+    var schemaObj = schemas[props[0]];
+    for(var i = 1; i < props.length; i++) {
+      if (!schemaObj.properties || !schemaObj.properties[props[i]]) {
+        throw new Error("Can't access to schema " + props[0] + " with path " + type);
+      }
+      schemaObj = schemaObj.properties[props[i]];
+    }
+    return schemaObj;
+  } else {
+    return schemas[type];
+  }
+}
+
+function handleMemberExpressions(context, node) {
+  if (node.object && node.object.name) {
+    var scope = traverseScope(node, {
+      props: [],
+      typedVars: []
+    });
+    if (scope.props.length && scope.typedVars.length) {
+      scope.typedVars.forEach(function (param) {
+        if (param.varName !== node.object.name) return;
+        try {
+          var schema = getSchemaByType(param.type);
+        } catch (e) {
+          context.report(node, e.message);
+          return;
+        }
+        if (!schema) {
+          context.report(node, 'Unknown schema and object type ' + param.type);
+          return;
+        }
+        if (!schema.properties) {
+          context.report(node, 'Type ' + param.type + ' has no properties. Trying to access "' + scope.props.join('.') + '"');
+          return;
+        }
+        var valid = validateAccess(scope.props, schema, 0);
+        if (valid !== null) {
+          context.report(node, 'Invalid access to property ' + valid + ' for type ' + param.type);
+        }
+      });
+    }
+  }
+}
+
+var start = Date.now();
 
 module.exports = function (context) {
   loadShemas(context.settings);
   return {
-    MemberExpression: function (node) {
-      if (node.object && node.object.name) {
-        var scope = traverseScope(node, {
-          props: [],
-        });
-        if (scope.props.length && scope.typedVars) {
-          scope.typedVars.forEach(function (param) {
-            if (param.varName !== node.object.name) return;
-            var schema = schemas[param.type];
-            if (!schema) {
-              context.report(node, 'Unknown schema and object type ' + param.type);
-              return;
-            }
-            if (!schema.properties) {
-              context.report(node, 'Wrong schema ' + param.type + '. No properties');
-              return;
-            }
-            var valid = validateAccess(scope.props, schema, 0);
-            if (valid !== null) {
-              context.report(node, 'Invalid access to property ' + valid + ' in variable ' + param.type);
-            }
-          });
-        }
-      }
-    }
+    MemberExpression: handleMemberExpressions.bind(null, context)
   };
 }

@@ -4,7 +4,7 @@
  * @param {Boolean} flag
  * @returns {number}
  */
-const convertShopToClient = (man, flag) => {
-    var zoko = man[0];
+function test(man, flag) {
+    var zoko = man.data;
     zoko.bbbbb = 123;
 }

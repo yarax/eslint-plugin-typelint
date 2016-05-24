@@ -1,7 +1,5 @@
 /**
  * @TODO don't collect wrong assignments
- * @TODO handle schema arrays
- * @TODO member can be function lol, check it
  **/
 var schemas;
 var adapters;
@@ -10,6 +8,7 @@ var nodePath = require('path');
 var commentable = ['VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
 var functinable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'];
 var assignable = ['VariableDeclaration'];
+var allowedForArray = Object.getOwnPropertyNames(Array.prototype);
 
 function parseComments(commentString) {
   var m = commentString.match(/@param\s*(.*?)\n/g);
@@ -152,8 +151,11 @@ function adaptProp(prop) {
 function validateAccess(props, schema, i) {
   if (!props[i]) return null;
   var schemaProp = adaptProp(props[i]);
-  if (!schema.properties) {
-    return props[i]
+  // access to Array methods and properties
+  // @TODO implement access by indexes
+  if (!schema.properties && schema.items) {
+    if (allowedForArray.indexOf(props[i]) === -1) return props[i]
+    else return null;
   }
   if (schema.properties[schemaProp]) {
     return validateAccess(props, schema.properties[schemaProp], i + 1);

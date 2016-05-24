@@ -1,0 +1,12 @@
+---
+  env:
+    node: true
+    es6: true
+  rules:
+    typelint: 2
+  settings:
+    typelint:
+      modelsDir: './models'
+      adapters: ['snake_case']
+      nestedSubDir: '/v1/definitions'
+      useCache: false

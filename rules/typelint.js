@@ -1,7 +1,8 @@
 var schemas;
 var adapters;
 var fs = require('fs');
-var commentable = ['ExpressionStatement', 'VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
+var nodePath = require('path');
+var commentable = ['VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
 var functinable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'];
 var assignable = ['VariableDeclaration'];
 
@@ -9,7 +10,7 @@ function parseComments(commentString) {
   var m = commentString.match(/@param\s*(.*?)\n/g);
   if (m) {
     return m.map(function (paramLine) {
-      paramLine = paramLine.replace(/@(param|typedef)\s*/, '').replace(/\{.*?\}/, '');
+      paramLine = paramLine.replace(/@param\s*/, '').replace(/\{.*?\}/, '');
       var ms = paramLine.trim().split(' ');
       var varName = ms[0];
       if (!ms[1]) return null;
@@ -106,9 +107,8 @@ function searchForAssignments(node, scope) {
  * @returns {Object} scope {typedVars: [{varName: 'a', type: 'user'}, {..}], props: ['a', 'b']}
  */
 function traverseScope(node, scope) {
-  console.log(node.type, node.leadingComments);
   // Collect all comments with types
-  if (/*commentable.indexOf(node.type) !== -1 && */node.leadingComments) {
+  if (commentable.indexOf(node.type) !== -1 && node.leadingComments) {
     var comments = parseComments(node.leadingComments[0].value);
     // @TODO prevent similar typedVars
     scope.typedVars = scope.typedVars.concat(comments);
@@ -118,7 +118,7 @@ function traverseScope(node, scope) {
     scope.functionNode = node.body;
   }
 
-  if (scope.typedVars.length && scope.functionNode) {
+  if (scope.functionNode && scope.typedVars) {
     scope = searchForAssignments(scope.functionNode, scope);
   }
 
@@ -150,17 +150,16 @@ function validateAccess(props, schema, i) {
   }
 }
 
-function collectAllSchemas(path, collected, settings, fileName) {
+function collectAllSchemas(path, collected) {
+  if (!nodePath.isAbsolute(path)) {
+    path = process.cwd() + '/' + path;
+  }
   var stat = fs.statSync(path);
   if (stat.isFile()) {
-    return setSchema(path, collected, fileName);
-  } else if (fileName) {
-    if (settings.excludeModelDirs && settings.excludeModelDirs.indexOf(fileName) !== -1) {
-      return collected;
-    }
+    return setSchema(path, collected);
   }
-  return fs.readdirSync(path).reduce(function (obj, fileName) {
-    obj = collectAllSchemas(path + '/' + fileName, obj, settings, fileName);
+  return fs.readdirSync(path).reduce(function (obj, file) {
+    obj = collectAllSchemas(path + '/' + file, obj);
     return obj;
   }, collected);
 }
@@ -183,27 +182,27 @@ function setSchema(path, prev) {
 
 function getFromCache() {
   try {
-    return require('./models_cache.json');
+    return require('../cache/models.json');
   } catch(e) {
     return false;
   }
 }
 
 function cacheSchema(schema) {
-  return fs.writeFileSync(__dirname + '/models_cache.json', JSON.stringify(schema));
+  return fs.writeFileSync(__dirname + '/../cache/models.json', JSON.stringify(schema));
 }
 
 function loadShemas(settings) {
   if (!settings || !settings.modelsDir) {
-    throw new Error('Please provide settings section with models in your eslint config');
+    throw new Error('Please provide settings.typelint section with models in your eslint config');
   }
   adapters = settings.adapters.map(function (adapterName) {
     return require('../adapters/' + adapterName)
   });
   if (settings.useCache) {
-    schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}, settings));
+    schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}));
   } else {
-    schemas = collectAllSchemas(settings.modelsDir, {}, settings);
+    schemas = collectAllSchemas(settings.modelsDir, {});
   }
 }
 
@@ -259,10 +258,8 @@ function handleMemberExpressions(context, node) {
   }
 }
 
-var start = Date.now();
-
 module.exports = function (context) {
-  loadShemas(context.settings);
+  loadShemas(context.settings && context.settings.typelint);
   return {
     MemberExpression: handleMemberExpressions.bind(null, context)
   };

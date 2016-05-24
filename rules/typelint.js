@@ -1,6 +1,7 @@
 /**
  * @TODO don't collect wrong assignments
  * @TODO handle schema arrays
+ * @TODO member can be function lol, check it
  **/
 var schemas;
 var adapters;

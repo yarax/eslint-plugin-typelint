@@ -1,3 +1,6 @@
+/**
+ * @TODO don't collect wrong assignments
+ **/
 var schemas;
 var adapters;
 var fs = require('fs');

@@ -203,9 +203,9 @@ function loadShemas(settings) {
     return require('../adapters/' + adapterName)
   });
   if (settings.useCache) {
-    schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}));
+    schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}, settings));
   } else {
-    schemas = collectAllSchemas(settings.modelsDir, {});
+    schemas = collectAllSchemas(settings.modelsDir, {}, settings);
   }
 }
 

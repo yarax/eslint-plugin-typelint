@@ -108,7 +108,7 @@ function searchForAssignments(node, scope) {
  */
 function traverseScope(node, scope) {
   // Collect all comments with types
-  if (commentable.indexOf(node.type) !== -1 && node.leadingComments) {
+  if (node.leadingComments) {
     var comments = parseComments(node.leadingComments[0].value);
     // @TODO prevent similar typedVars
     scope.typedVars = scope.typedVars.concat(comments);

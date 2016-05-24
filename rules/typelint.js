@@ -1,5 +1,6 @@
 /**
  * @TODO don't collect wrong assignments
+ * @TODO handle schema arrays
  **/
 var schemas;
 var adapters;
@@ -148,6 +149,9 @@ function adaptProp(prop) {
 function validateAccess(props, schema, i) {
   if (!props[i]) return null;
   var schemaProp = adaptProp(props[i]);
+  if (!schema.properties) {
+    return props[i]
+  }
   if (schema.properties[schemaProp]) {
     return validateAccess(props, schema.properties[schemaProp], i + 1);
   } else {

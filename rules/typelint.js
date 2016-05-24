@@ -220,13 +220,13 @@ function getSchemaByType(type) {
   if (type.match(/\./)) {
     var props = type.split('.');
     var schemaObj = schemas[props[0]];
-    for(var i = 1; i < props.length; i++) {
-      if (!schemaObj.properties || !schemaObj.properties[props[i]]) {
+    return props.reduce(function (prev, prop) {
+      if (!prev.properties || !prev.properties[prop]) {
         throw new Error("Can't access to schema " + props[0] + " with path " + type);
       }
-      schemaObj = schemaObj.properties[props[i]];
-    }
-    return schemaObj;
+      prev = prev.properties[prop];
+      return prev;
+    }, schemaObj);
   } else {
     return schemas[type];
   }

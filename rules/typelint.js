@@ -1,5 +1,6 @@
 /**
  * @TODO don't collect wrong assignments
+ * @TODO @vardef and inline comments
  **/
 var schemas;
 var adapters;

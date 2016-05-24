@@ -114,7 +114,9 @@ function traverseScope(node, scope) {
   if (node.leadingComments) {
     var comments = parseComments(node.leadingComments[0].value);
     // @TODO prevent similar typedVars
-    scope.typedVars = scope.typedVars.concat(comments);
+    if (comments) {
+      scope.typedVars = scope.typedVars.concat(comments);
+    }
   }
   // Look up nearest function scope and exit
   if (functinable.indexOf(node.type) !== -1) {

@@ -3,7 +3,7 @@ const b = 43535;
 const util = require('util');
 /**
  * OLOLO
- * @param man [human]
+ * @param man <human>
  * @param {Boolean} flag
  * @returns {number}
  */

@@ -1,6 +1,6 @@
 /**
  * Test transfer data with variables
- * @param man [human]
+ * @param man <human>
  * @param {Boolean} flag
  * @returns {number}
  */

@@ -19,7 +19,7 @@ function parseComments(commentString) {
       var ms = paramLine.trim().split(' ');
       var varName = ms[0];
       if (!ms[1]) return null;
-      var m2 = ms[1].match(/\[(.*?)\]/);
+      var m2 = ms[1].match(/\<(.*?)\>/);
       if (m2) {
         return {
           varName: varName,

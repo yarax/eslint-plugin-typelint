@@ -1,6 +1,6 @@
 /**
  * Test regular function with parameters
- * @param man [human]
+ * @param man <human>
  * @param {Boolean} flag
  * @returns {number}
  */

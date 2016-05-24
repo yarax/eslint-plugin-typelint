@@ -222,7 +222,8 @@ function getSchemaByType(type) {
   if (type.match(/\./)) {
     var props = type.split('.');
     var schemaObj = schemas[props[0]];
-    return props.reduce(function (prev, prop) {
+    return props.reduce(function (prev, prop, i) {
+      if (!i) return prev; // first member is an object itself
       if (!prev.properties || !prev.properties[prop]) {
         throw new Error("Can't access to schema " + props[0] + " with path " + type);
       }

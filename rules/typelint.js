@@ -149,17 +149,20 @@ function validateAccess(props, schema, i) {
     return props[i];
   }
 }
-
-function collectAllSchemas(path, collected) {
+function collectAllSchemas(path, collected, settings, fileName) {
   if (!nodePath.isAbsolute(path)) {
     path = process.cwd() + '/' + path;
   }
   var stat = fs.statSync(path);
   if (stat.isFile()) {
-    return setSchema(path, collected);
+    return setSchema(path, collected, fileName);
+  } else if (fileName) {
+    if (settings.excludeModelDirs && settings.excludeModelDirs.indexOf(fileName) !== -1) {
+      return collected;
+    }
   }
-  return fs.readdirSync(path).reduce(function (obj, file) {
-    obj = collectAllSchemas(path + '/' + file, obj);
+  return fs.readdirSync(path).reduce(function (obj, fileName) {
+    obj = collectAllSchemas(path + '/' + fileName, obj, settings, fileName);
     return obj;
   }, collected);
 }

@@ -113,11 +113,13 @@ function searchForAssignments(node, scope) {
 function traverseScope(node, scope) {
   // Collect all comments with types
   if (node.leadingComments) {
-    var comments = parseComments(node.leadingComments[0].value);
-    // @TODO prevent similar typedVars
-    if (comments) {
-      scope.typedVars = scope.typedVars.concat(comments);
-    }
+    node.leadingComments.forEach(function (comment) {
+      var comments = parseComments(comment.value);
+      // @TODO prevent similar typedVars
+      if (comments) {
+        scope.typedVars = scope.typedVars.concat(comments);
+      }
+    });
   }
   // Look up nearest function scope and exit
   if (functinable.indexOf(node.type) !== -1) {

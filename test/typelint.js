@@ -37,4 +37,13 @@ describe('typelint', function () {
     });
   });
 
+  it('@var and internal comments', (done) => {
+    exec(getCmd('internal_comments'), (err, stdout, stderr) => {
+      if (!err) {
+        throw new Error('@var: should throw error, because wrong member access');
+      }
+      done();
+    });
+  });
+
 });

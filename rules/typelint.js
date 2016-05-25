@@ -12,10 +12,10 @@ var assignable = ['VariableDeclaration'];
 var allowedForArray = Object.getOwnPropertyNames(Array.prototype);
 
 function parseComments(commentString) {
-  var m = commentString.match(/@param\s*(.*?)\n/g);
+  var m = commentString.match(/@(param|var|member)\s*(.*?)\n/g);
   if (m) {
     return m.map(function (paramLine) {
-      paramLine = paramLine.replace(/@param\s*/, '').replace(/\{.*?\}/, '');
+      paramLine = paramLine.replace(/@(param|var|member)\s*/, '').replace(/\{.*?\}/, '');
       var ms = paramLine.trim().split(' ');
       var varName = ms[0];
       if (!ms[1]) return null;
@@ -105,14 +105,23 @@ function searchForAssignments(node, scope) {
   }
 }
 
-/**
- *
- * @param node
- * @param scope
- * @returns {Object} scope {typedVars: [{varName: 'a', type: 'user'}, {..}], props: ['a', 'b']}
- */
-function traverseScope(node, scope) {
-  // Collect all comments with types
+
+function searchForInnerDefs(node, scope) {
+  scope = checkLeadingComments(node, scope);
+  if (node.body) {
+    if (Array.isArray(node.body)) {
+      return node.body.reduce(function (prevScope, tail) {
+        return searchForInnerDefs(tail, prevScope);
+      }, scope);
+    } else {
+      return searchForInnerDefs(node.body, scope);
+    }
+  } else {
+    return scope;
+  }
+}
+
+function checkLeadingComments(node ,scope) {
   if (node.leadingComments) {
     node.leadingComments.forEach(function (comment) {
       var comments = parseComments(comment.value);
@@ -122,12 +131,31 @@ function traverseScope(node, scope) {
       }
     });
   }
+  return scope;
+}
+
+/**
+ *
+ * @param node
+ * @param scope
+ * @returns {Object} scope {typedVars: [{varName: 'a', type: 'user'}, {..}], props: ['a', 'b']}
+ */
+function traverseScope(node, scope) {
+  //console.log(node.type, node.leadingComments, !!scope.functionNode);
+
+  if (node.type === 'Program' && scope.functionNode) {
+    scope = searchForInnerDefs(scope.functionNode, scope);
+  }
+
+  // Collect all comments with types
+  scope = checkLeadingComments(node, scope);
+
   // Look up nearest function scope and exit
   if (functinable.indexOf(node.type) !== -1) {
     scope.functionNode = node.body;
   }
 
-  if (scope.functionNode && scope.typedVars) {
+  if (scope.functionNode && scope.typedVars.length) {
     scope = searchForAssignments(scope.functionNode, scope);
   }
 

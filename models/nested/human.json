@@ -15,7 +15,18 @@
     },
     "friends": {
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "name": "string",
+          "age": "number",
+          "skills": {
+            "type": "object",
+            "properties": {
+              "mafia": "boolean",
+              "civilian": "boolean"
+            }
+          }
+        }
       }
 
     }

@@ -183,8 +183,11 @@ function validateAccess(props, schema, i) {
   // access to Array methods and properties
   // @TODO implement access by indexes
   if (!schema.properties && schema.items) {
-    if (allowedForArray.indexOf(props[i]) === -1) return props[i]
-    else return null;
+    if (allowedForArray.indexOf(props[i]) === -1) {
+      if (schema.items.properties && schema.items.properties[schemaProp]) return null;
+      else return props[i];
+    }
+    return null;
   }
   if (schema.properties[schemaProp]) {
     return validateAccess(props, schema.properties[schemaProp], i + 1);

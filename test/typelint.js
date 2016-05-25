@@ -46,4 +46,11 @@ describe('typelint', function () {
     });
   });
 
+  it('Const definition before arrow function', (done) => {
+    exec(getCmd('test_arrays_access'), (err, stdout, stderr) => {
+      if (err || stderr) return done(new Error(stdout));
+      done();
+    });
+  });
+
 });

@@ -17,6 +17,7 @@
     "js-yaml": "^3.6.1"
   },
   "devDependencies": {
+    "babel-eslint": "^6.0.4",
     "mocha": "^2.5.2"
   }
 }

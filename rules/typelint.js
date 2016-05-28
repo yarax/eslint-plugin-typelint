@@ -1,7 +1,3 @@
-/**
- * @TODO don't collect wrong assignments
- * @TODO @var and inline comments
- **/
 var schemas;
 var adapters;
 var fs = require('fs');
@@ -9,17 +5,17 @@ var nodePath = require('path');
 var commentable = ['VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
 var functinable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'];
 var assignable = ['VariableDeclaration'];
-var allowedForArray = Object.getOwnPropertyNames(Array.prototype);
 
+// @TODO move to doctrine
 function parseComments(commentString) {
-  var m = commentString.match(/@(param|var|member)\s*(.*?)\n/g);
+  var m = commentString.match(/@param\s*(.*?)\n/g);
   if (m) {
     return m.map(function (paramLine) {
-      paramLine = paramLine.replace(/@(param|var|member)\s*/, '').replace(/\{.*?\}/, '');
+      paramLine = paramLine.replace(/@param\s*/, '').replace(/\{.*?\}/, '');
       var ms = paramLine.trim().split(' ');
       var varName = ms[0];
       if (!ms[1]) return null;
-      var m2 = ms[1].match(/\<(.*?)\>/);
+      var m2 = ms[1].match(/\[(.*?)\]/);
       if (m2) {
         return {
           varName: varName,
@@ -83,7 +79,6 @@ function searchForAssignments(node, scope) {
         newVarType = typeOfVarInScope(fromVar, scope);
         if (newVarType) {
           fromVarProps = traverseAllMembers(declaration.init, []);
-          newVarType = typeOfVarInScope(fromVar, scope);
           newVarType = newVarType + '.' + fromVarProps.join('.');
         }
       }
@@ -105,35 +100,6 @@ function searchForAssignments(node, scope) {
   }
 }
 
-
-function searchForInnerDefs(node, scope) {
-  scope = checkLeadingComments(node, scope);
-  if (node.body) {
-    if (Array.isArray(node.body)) {
-      return node.body.reduce(function (prevScope, tail) {
-        return searchForInnerDefs(tail, prevScope);
-      }, scope);
-    } else {
-      return searchForInnerDefs(node.body, scope);
-    }
-  } else {
-    return scope;
-  }
-}
-
-function checkLeadingComments(node ,scope) {
-  if (node.leadingComments) {
-    node.leadingComments.forEach(function (comment) {
-      var comments = parseComments(comment.value);
-      // @TODO prevent similar typedVars
-      if (comments) {
-        scope.typedVars = scope.typedVars.concat(comments);
-      }
-    });
-  }
-  return scope;
-}
-
 /**
  *
  * @param node
@@ -141,21 +107,20 @@ function checkLeadingComments(node ,scope) {
  * @returns {Object} scope {typedVars: [{varName: 'a', type: 'user'}, {..}], props: ['a', 'b']}
  */
 function traverseScope(node, scope) {
-  //console.log(node.type, node.leadingComments, !!scope.functionNode);
-
-  if (node.type === 'Program' && scope.functionNode) {
-    scope = searchForInnerDefs(scope.functionNode, scope);
-  }
-
   // Collect all comments with types
-  scope = checkLeadingComments(node, scope);
-
+  if (commentable.indexOf(node.type) !== -1 && node.leadingComments) {
+    var comments = parseComments(node.leadingComments[0].value);
+    // @TODO prevent similar typedVars
+    if (comments) {
+      scope.typedVars = scope.typedVars.concat(comments);
+    }
+  }
   // Look up nearest function scope and exit
   if (functinable.indexOf(node.type) !== -1) {
     scope.functionNode = node.body;
   }
 
-  if (scope.functionNode && scope.typedVars.length) {
+  if (scope.functionNode && scope.typedVars) {
     scope = searchForAssignments(scope.functionNode, scope);
   }
 
@@ -180,35 +145,23 @@ function adaptProp(prop) {
 function validateAccess(props, schema, i) {
   if (!props[i]) return null;
   var schemaProp = adaptProp(props[i]);
-  // access to Array methods and properties
-  // @TODO implement access by indexes
-  if (!schema.properties && schema.items) {
-    if (allowedForArray.indexOf(props[i]) === -1) {
-      if (schema.items.properties && schema.items.properties[schemaProp]) return null;
-      else return props[i];
-    }
-    return null;
-  }
   if (schema.properties[schemaProp]) {
     return validateAccess(props, schema.properties[schemaProp], i + 1);
   } else {
     return props[i];
   }
 }
-function collectAllSchemas(path, collected, settings, fileName) {
+
+function collectAllSchemas(path, collected) {
   if (!nodePath.isAbsolute(path)) {
     path = process.cwd() + '/' + path;
   }
   var stat = fs.statSync(path);
   if (stat.isFile()) {
-    return setSchema(path, collected, fileName);
-  } else if (fileName) {
-    if (settings.excludeModelDirs && settings.excludeModelDirs.indexOf(fileName) !== -1) {
-      return collected;
-    }
+    return setSchema(path, collected);
   }
-  return fs.readdirSync(path).reduce(function (obj, fileName) {
-    obj = collectAllSchemas(path + '/' + fileName, obj, settings, fileName);
+  return fs.readdirSync(path).reduce(function (obj, file) {
+    obj = collectAllSchemas(path + '/' + file, obj);
     return obj;
   }, collected);
 }
@@ -249,9 +202,9 @@ function loadShemas(settings) {
     return require('../adapters/' + adapterName)
   });
   if (settings.useCache) {
-    schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}, settings));
+    schemas = getFromCache() || cacheSchema(collectAllSchemas(settings.modelsDir, {}));
   } else {
-    schemas = collectAllSchemas(settings.modelsDir, {}, settings);
+    schemas = collectAllSchemas(settings.modelsDir, {});
   }
 }
 
@@ -263,14 +216,13 @@ function getSchemaByType(type) {
   if (type.match(/\./)) {
     var props = type.split('.');
     var schemaObj = schemas[props[0]];
-    return props.reduce(function (prev, prop, i) {
-      if (!i) return prev; // first member is an object itself
-      if (!prev.properties || !prev.properties[prop]) {
+    for(var i = 1; i < props.length; i++) {
+      if (!schemaObj.properties || !schemaObj.properties[props[i]]) {
         throw new Error("Can't access to schema " + props[0] + " with path " + type);
       }
-      prev = prev.properties[prop];
-      return prev;
-    }, schemaObj);
+      schemaObj = schemaObj.properties[props[i]];
+    }
+    return schemaObj;
   } else {
     return schemas[type];
   }

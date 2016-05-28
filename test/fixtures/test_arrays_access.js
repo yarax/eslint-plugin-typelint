@@ -5,5 +5,5 @@
  * @returns {number}
  */
 function test(man, friend) {
-    var len = man.friends.n3ame;
+    var len = man.friends.name;
 }

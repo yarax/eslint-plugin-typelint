@@ -5,17 +5,18 @@ var nodePath = require('path');
 var commentable = ['VariableDeclaration', 'FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'ExportDefaultDeclaration'];
 var functinable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'];
 var assignable = ['VariableDeclaration'];
+var allowedForArray = Object.getOwnPropertyNames(Array.prototype);
 
 // @TODO move to doctrine
 function parseComments(commentString) {
-  var m = commentString.match(/@param\s*(.*?)\n/g);
+  var m = commentString.match(/@(param|var|member)\s*(.*?)\n/g);
   if (m) {
     return m.map(function (paramLine) {
-      paramLine = paramLine.replace(/@param\s*/, '').replace(/\{.*?\}/, '');
+      paramLine = paramLine.replace(/@(param|var|member)\s*/, '').replace(/\{.*?\}/, '');
       var ms = paramLine.trim().split(' ');
       var varName = ms[0];
       if (!ms[1]) return null;
-      var m2 = ms[1].match(/\[(.*?)\]/);
+      var m2 = ms[1].match(/\<(.*?)\>/);
       if (m2) {
         return {
           varName: varName,
@@ -62,6 +63,7 @@ function typeOfVarInScope(varName, scope) {
 }
 
 function searchForAssignments(node, scope) {
+  scope = grabComments(node, scope);
   if (assignable.indexOf(node.type) !== -1) {
     //searchForAssignments(require('util').inspect(node.body, {depth: 5}));
     node.declarations.forEach(function (declaration) {
@@ -100,6 +102,17 @@ function searchForAssignments(node, scope) {
   }
 }
 
+function grabComments(node, scope) {
+  if (node.leadingComments) {
+    var comments = parseComments(node.leadingComments[0].value);
+    // @TODO prevent similar typedVars
+    if (comments) {
+      scope.typedVars = scope.typedVars.concat(comments);
+    }
+  }
+  return scope;
+}
+
 /**
  *
  * @param node
@@ -108,19 +121,9 @@ function searchForAssignments(node, scope) {
  */
 function traverseScope(node, scope) {
   // Collect all comments with types
-  if (commentable.indexOf(node.type) !== -1 && node.leadingComments) {
-    var comments = parseComments(node.leadingComments[0].value);
-    // @TODO prevent similar typedVars
-    if (comments) {
-      scope.typedVars = scope.typedVars.concat(comments);
-    }
-  }
-  // Look up nearest function scope and exit
+  scope = grabComments(node, scope);
   if (functinable.indexOf(node.type) !== -1) {
     scope.functionNode = node.body;
-  }
-
-  if (scope.functionNode && scope.typedVars) {
     scope = searchForAssignments(scope.functionNode, scope);
   }
 
@@ -145,6 +148,15 @@ function adaptProp(prop) {
 function validateAccess(props, schema, i) {
   if (!props[i]) return null;
   var schemaProp = adaptProp(props[i]);
+  // access to Array methods and properties
+  // @TODO implement access by indexes
+  if (!schema.properties && schema.items) {
+    if (allowedForArray.indexOf(props[i]) === -1) {
+      if (schema.items.properties && schema.items.properties[schemaProp]) return null;
+      else return props[i];
+    }
+    return null;
+  }
   if (schema.properties[schemaProp]) {
     return validateAccess(props, schema.properties[schemaProp], i + 1);
   } else {
@@ -232,7 +244,8 @@ function handleMemberExpressions(context, node) {
   if (node.object && node.object.name) {
     var scope = traverseScope(node, {
       props: [],
-      typedVars: []
+      typedVars: [],
+      debug: node.object.name === 'campaignData'
     });
     if (scope.props.length && scope.typedVars.length) {
       scope.typedVars.forEach(function (param) {

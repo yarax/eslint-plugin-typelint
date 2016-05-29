@@ -61,4 +61,13 @@ describe('typelint', function () {
     });
   });
 
+  it('JSDoc types', (done) => {
+    exec(getCmd('jsdoc_types'), (err, stdout, stderr) => {
+      if (!err) {
+        throw new Error('Should throw error');
+      }
+      done();
+    });
+  });
+
 });

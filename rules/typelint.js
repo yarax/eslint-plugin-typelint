@@ -6,19 +6,29 @@ var commentable = ['VariableDeclaration', 'FunctionDeclaration', 'FunctionExpres
 var functinable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'];
 var assignable = ['VariableDeclaration'];
 var allowedForArray = Object.getOwnPropertyNames(Array.prototype);
-
+function wrapJSSchema(props) {
+  return {
+    type: "object",
+    properties: props.reduce(function (prev, prop) {prev[prop] = 'string'; return prev;}, {})
+  }
+}
+var nativeSchemas = {
+  string: wrapJSSchema(Object.getOwnPropertyNames(String.prototype)),
+  array: wrapJSSchema(Object.getOwnPropertyNames(Array.prototype)),
+  number: wrapJSSchema(Object.getOwnPropertyNames(Number.prototype)),
+  object: wrapJSSchema(Object.getOwnPropertyNames(Object.prototype)),
+};
 
 function parseNativeTypes(commentString) {
-  return [];
-  var matchRegExp = new RegExp('@(param|var|member)\\\s*(\{.*?\})\\\s*([a-zA-Z0-9_]+)', 'g');
-  var nativeTypes = commentString.match(matchRegExp);
+  //return [];
+  var nativeTypes = commentString.match(/@(param|var|member)\s*\{(.*?)\}\s*([a-zA-Z0-9_]+)/g);
   if (nativeTypes) {
     return nativeTypes.map(function (paramLine) {
-      var m2 = paramLine.match(matchRegExp);
+      var m2 = paramLine.match(/@(param|var|member)\s*\{(.*?)\}\s*([a-zA-Z0-9_]+)/);
       if (m2) {
         return {
-          varName: varName,
-          type: m2[1]
+          varName: m2[3],
+          type: m2[2]
         }
       } else {
         return null;
@@ -173,9 +183,9 @@ function adaptProp(prop) {
   }, prop);
 }
 
-function validateAccess(props, schema, i) {
+function validateAccess(props, schema, i, useAdapters) {
   if (!props[i]) return null;
-  var schemaProp = adaptProp(props[i]);
+  var schemaProp = useAdapters ? adaptProp(props[i]) : props[i];
   // access to Array methods and properties
   // @TODO implement access by indexes
   if (!schema.properties && schema.items) {
@@ -186,7 +196,7 @@ function validateAccess(props, schema, i) {
     return null;
   }
   if (schema.properties[schemaProp]) {
-    return validateAccess(props, schema.properties[schemaProp], i + 1);
+    return validateAccess(props, schema.properties[schemaProp], i + 1, useAdapters);
   } else {
     return props[i];
   }
@@ -268,6 +278,37 @@ function getSchemaByType(type) {
   }
 }
 
+function getNativeSchema(type) {
+  var schema = nativeSchemas[type.toLowerCase()];
+  if (!schema) {
+    throw new Error('Schema or native type ' + type + ' is not implemented');
+  }
+  return schema;
+}
+
+function validateBySchema(param, scope, node, context, native) {
+  if (param.varName !== node.object.name) return;
+  try {
+    var schema = native ? getNativeSchema(param.type) : getSchemaByType(param.type);
+  } catch (e) {
+    context.report(node, e.message);
+    return;
+  }
+  if (!schema) {
+    context.report(node, 'Unknown schema and object type ' + param.type);
+    return;
+  }
+  if (!schema.properties) {
+    context.report(node, 'Type ' + param.type + ' has no properties. Trying to access "' + scope.props.join('.') + '"');
+    return;
+  }
+  var valid = validateAccess(scope.props, schema, 0, native ? false : true);
+  if (valid !== null) {
+    console.log(schema, scope.props);
+    context.report(node, 'Invalid access to property ' + valid + ' for type ' + param.type);
+  }
+}
+
 function handleMemberExpressions(context, node) {
   if (node.object && node.object.name) {
     var scope = traverseScope(node, {
@@ -276,35 +317,17 @@ function handleMemberExpressions(context, node) {
       nativeVars: [],
       debug: node.object.name === 'campaignData'
     });
-    
+
     if (scope.props.length && scope.nativeVars.length &&
       context.settings.typelint && context.settings.typelint.lintNative) {
-      scope.nativeVars.forEach(function (nativeVar) {
-
+      scope.nativeVars.forEach(function (param) {
+        validateBySchema(param, scope, node, context, true);
       });
     }
     
     if (scope.props.length && scope.typedVars.length) {
       scope.typedVars.forEach(function (param) {
-        if (param.varName !== node.object.name) return;
-        try {
-          var schema = getSchemaByType(param.type);
-        } catch (e) {
-          context.report(node, e.message);
-          return;
-        }
-        if (!schema) {
-          context.report(node, 'Unknown schema and object type ' + param.type);
-          return;
-        }
-        if (!schema.properties) {
-          context.report(node, 'Type ' + param.type + ' has no properties. Trying to access "' + scope.props.join('.') + '"');
-          return;
-        }
-        var valid = validateAccess(scope.props, schema, 0);
-        if (valid !== null) {
-          context.report(node, 'Invalid access to property ' + valid + ' for type ' + param.type);
-        }
+        validateBySchema(param, scope, node, context, false);
       });
     }
   }

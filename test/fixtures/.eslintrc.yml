@@ -7,6 +7,7 @@
     typelint: 2
   settings:
     typelint:
+      lintNative: true
       modelsDir: './models'
       adapters: ['snake_case']
       nestedSubDir: '/v1/definitions'

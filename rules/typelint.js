@@ -7,11 +7,39 @@ var functinable = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionEx
 var assignable = ['VariableDeclaration'];
 var allowedForArray = Object.getOwnPropertyNames(Array.prototype);
 
-// @TODO move to doctrine
-function parseComments(commentString) {
-  var m = commentString.match(/@(param|var|member)\s*(.*?)\n/g);
-  if (m) {
-    return m.map(function (paramLine) {
+
+function parseNativeTypes(commentString) {
+  return [];
+  var matchRegExp = new RegExp('@(param|var|member)\\\s*(\{.*?\})\\\s*([a-zA-Z0-9_]+)', 'g');
+  var nativeTypes = commentString.match(matchRegExp);
+  if (nativeTypes) {
+    return nativeTypes.map(function (paramLine) {
+      var m2 = paramLine.match(matchRegExp);
+      if (m2) {
+        return {
+          varName: varName,
+          type: m2[1]
+        }
+      } else {
+        return null;
+      }
+    }).filter(function (comment) {
+      return comment;
+    });
+  } else {
+    return [];
+  }
+}
+
+/**
+ * // @TODO move to doctrine
+ * @param {String} commentString
+ * @returns {Array}
+ */
+function parseComplexTypes(commentString) {
+  var typedComments = commentString.match(/@(param|var|member)\s*(.*?)\n/g);
+  if (typedComments) {
+    return typedComments.map(function (paramLine) {
       paramLine = paramLine.replace(/@(param|var|member)\s*/, '').replace(/\{.*?\}/, '');
       var ms = paramLine.trim().split(' ');
       var varName = ms[0];
@@ -29,7 +57,7 @@ function parseComments(commentString) {
       return comment;
     });
   } else {
-    return null;
+    return [];
   }
 }
 
@@ -104,11 +132,11 @@ function searchForAssignments(node, scope) {
 
 function grabComments(node, scope) {
   if (node.leadingComments) {
-    var comments = parseComments(node.leadingComments[0].value);
+    var complexTypes = parseComplexTypes(node.leadingComments[0].value);
+    var nativeTypes = parseNativeTypes(node.leadingComments[0].value);
     // @TODO prevent similar typedVars
-    if (comments) {
-      scope.typedVars = scope.typedVars.concat(comments);
-    }
+    scope.typedVars = scope.typedVars.concat(complexTypes);
+    scope.nativeVars = scope.nativeVars.concat(nativeTypes);
   }
   return scope;
 }
@@ -245,8 +273,17 @@ function handleMemberExpressions(context, node) {
     var scope = traverseScope(node, {
       props: [],
       typedVars: [],
+      nativeVars: [],
       debug: node.object.name === 'campaignData'
     });
+    
+    if (scope.props.length && scope.nativeVars.length &&
+      context.settings.typelint && context.settings.typelint.lintNative) {
+      scope.nativeVars.forEach(function (nativeVar) {
+
+      });
+    }
+    
     if (scope.props.length && scope.typedVars.length) {
       scope.typedVars.forEach(function (param) {
         if (param.varName !== node.object.name) return;

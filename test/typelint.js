@@ -1,11 +1,19 @@
 var exec = require('child_process').exec;
 var assert = require('assert');
 
-const getCmd = (file) => {
-  return `node ${__dirname}/../node_modules/.bin/eslint --rulesdir=${__dirname}/../rules/ -c ${__dirname}/fixtures/.eslintrc.yml ${__dirname}/fixtures/${file}.js`;
+const getCmd = (file, config) => {
+  if (!config) config = '.eslintrc.yml';
+  return `node ${__dirname}/../node_modules/.bin/eslint --rulesdir=${__dirname}/../rules/ -c ${__dirname}/fixtures/${config} ${__dirname}/fixtures/${file}.js`;
 }
 
 describe('typelint', function () {
+
+  it('Run with default config without settings', (done) => {
+    exec(getCmd('test', '.simple.yml'), (err, stdout, stderr) => {
+      if (err || stderr) return done(new Error(stdout));
+      done();
+    });
+  });
 
   it('Regular function comments/variable', (done) => {
     exec(getCmd('test'), (err, stdout, stderr) => {

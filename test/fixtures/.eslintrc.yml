@@ -7,7 +7,7 @@
   settings:
     typelint:
       lintNative: true
-      modelsDir: './models'
-      adapters: ['snake_case']
+      modelsDir: './test/fixtures/models'
+      adapters: ['to_snake_case']
       nestedSubDir: '/v1/definitions'
       useCache: false

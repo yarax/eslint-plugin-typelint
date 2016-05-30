@@ -1,0 +1,15 @@
+---
+  env:
+    node: true
+  rules:
+    eol-last: 0
+    no-trailing-spaces: 0
+    func-names: 0
+    comma-dangle: 0
+    no-param-reassign: 0
+  extends: 'airbnb-base/legacy'
+#  settings:
+#    typelint:
+#      lintNative: true
+#      modelsDir: './lib/models'
+#      useCache: false

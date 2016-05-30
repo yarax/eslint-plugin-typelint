@@ -1,0 +1,15 @@
+properties:
+  props:
+    items:
+      type: 'string'
+  typedVars:
+    items:
+      type: 'string'
+  nativeVars:
+    items:
+      type: 'object'
+      properties:
+        varName: 'string'
+        varType: 'string'
+        source: 'string'
+  debug: 'boolean'

@@ -17,6 +17,7 @@ var nativeSchemas = {
   array: wrapJSSchema(Object.getOwnPropertyNames(Array.prototype)),
   number: wrapJSSchema(Object.getOwnPropertyNames(Number.prototype)),
   object: wrapJSSchema(Object.getOwnPropertyNames(Object.prototype)),
+  boolean: wrapJSSchema(Object.getOwnPropertyNames(Boolean.prototype)),
 };
 
 function parseNativeTypes(commentString) {

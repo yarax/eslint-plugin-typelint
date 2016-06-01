@@ -7,6 +7,8 @@
     func-names: 0
     comma-dangle: 0
     no-param-reassign: 0
+    global-require: 0
+    no-underscore-dangle: 0
   extends: 'airbnb-base/legacy'
 #  settings:
 #    typelint:

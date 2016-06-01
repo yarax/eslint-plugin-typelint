@@ -1,6 +1,7 @@
 var loadSchemas = require('../lib/load-schemas');
 var traverseScope = require('../lib/traverse');
-var validateBySchema = require('../lib/validation');
+var validateBySchemaConstructor = require('../lib/validation');
+var validateBySchema;
 
 function handleMemberExpressions(context, node) {
   var scope;
@@ -28,7 +29,11 @@ function handleMemberExpressions(context, node) {
 }
 
 module.exports = function (context) {
-  loadSchemas(context.settings && context.settings.typelint);
+  var schemas = loadSchemas(context.settings && context.settings.typelint);
+  var adapters = context.settings.adapters.map(function (adapterName) {
+    return require('../adapters/' + adapterName);
+  });
+  validateBySchema = validateBySchemaConstructor(schemas, adapters);
   return {
     MemberExpression: handleMemberExpressions.bind(null, context)
   };

@@ -1,0 +1,4 @@
+properties:
+  varName: 'string'
+  varType: 'string'
+  source: 'string'

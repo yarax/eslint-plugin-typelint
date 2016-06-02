@@ -29,10 +29,12 @@ function handleMemberExpressions(context, node) {
 }
 
 module.exports = function (context) {
-  var schemas = loadSchemas(context.settings && context.settings.typelint);
-  var adapters = context.settings.adapters.map(function (adapterName) {
+  var settings = context.settings.typelint;
+  var schemas = loadSchemas(settings);
+  var adapters = (settings && settings.adapters) ? settings.adapters.map(function (adapterName) {
     return require('../adapters/' + adapterName);
-  });
+  }) : [];
+  console.log(adapters);
   validateBySchema = validateBySchemaConstructor(schemas, adapters);
   return {
     MemberExpression: handleMemberExpressions.bind(null, context)

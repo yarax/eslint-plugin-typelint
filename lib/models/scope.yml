@@ -8,8 +8,5 @@ properties:
   nativeVars:
     items:
       type: 'object'
-      properties:
-        varName: 'string'
-        varType: 'string'
-        source: 'string'
+      $ref: './var.yml'
   debug: 'boolean'

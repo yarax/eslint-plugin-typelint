@@ -5,32 +5,27 @@ var validateBySchema;
 
 function handleMemberExpressions(context, node) {
   var scope;
+  var checkNativeTypes = context.settings.typelint && context.settings.typelint.lintNative;
   if (node.object && node.object.name) {
     scope = traverseScope(node, {
+      init: {
+        start: node.start,
+        end: node.end
+      },
       props: [],
       typedVars: [],
       nativeVars: [],
-      debug: node.object.name === 'campaignData'
     });
-
-    if (scope.props.length && scope.nativeVars.length &&
-      context.settings.typelint && context.settings.typelint.lintNative) {
-      scope.nativeVars.forEach(function (param) {
-        validateBySchema(param, scope, node, context, true);
-      });
-    }
 
     if (scope.props.length && scope.typedVars.length) {
       scope.typedVars.forEach(function (param) {
+        if (!checkNativeTypes && param.format === 'native') return;
         validateBySchema(param, scope, node, context, false);
       });
     }
   }
 }
-var a = 0;
 module.exports = function (context) {
-  console.log(',,,', a);
-  if (++a > 3) throw new Error('ok');
   var settings = context.settings.typelint;
   var schemas = loadSchemas(settings);
   var adapters = (settings && settings.adapters) ? settings.adapters.map(function (adapterName) {

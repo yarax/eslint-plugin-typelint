@@ -10,8 +10,8 @@
     global-require: 0
     no-underscore-dangle: 0
   extends: 'airbnb-base/legacy'
-#  settings:
-#    typelint:
-#      lintNative: true
-#      modelsDir: './lib/models'
-#      useCache: false
+  settings:
+    typelint:
+      lintNative: true
+      modelsDir: './lib/models'
+      useCache: false

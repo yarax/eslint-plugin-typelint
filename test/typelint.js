@@ -78,6 +78,7 @@ describe('typelint', function () {
       if (!err) {
         throw new Error('Should throw error');
       }
+      assert(!!stdout.match(/Invalid access to property wrong for type human/), true);
       done();
     });
   });

@@ -27,16 +27,17 @@ function handleMemberExpressions(context, node) {
     }
   }
 }
-
+var a = 0;
 module.exports = function (context) {
+  console.log(',,,', a);
+  if (++a > 3) throw new Error('ok');
   var settings = context.settings.typelint;
   var schemas = loadSchemas(settings);
   var adapters = (settings && settings.adapters) ? settings.adapters.map(function (adapterName) {
     return require('../adapters/' + adapterName);
   }) : [];
-  console.log(adapters);
   validateBySchema = validateBySchemaConstructor(schemas, adapters);
   return {
-    MemberExpression: handleMemberExpressions.bind(null, context)
+    MemberExpression: handleMemberExpressions.bind(null, context),
   };
 };

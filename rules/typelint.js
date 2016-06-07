@@ -5,38 +5,34 @@ var validateBySchema;
 
 function handleMemberExpressions(context, node) {
   var scope;
+  var checkNativeTypes = context.settings.typelint && context.settings.typelint.lintNative;
   if (node.object && node.object.name) {
     scope = traverseScope(node, {
+      init: {
+        start: node.start,
+        end: node.end
+      },
       props: [],
       typedVars: [],
       nativeVars: [],
-      debug: node.object.name === 'campaignData'
     });
-
-    if (scope.props.length && scope.nativeVars.length &&
-      context.settings.typelint && context.settings.typelint.lintNative) {
-      scope.nativeVars.forEach(function (param) {
-        validateBySchema(param, scope, node, context, true);
-      });
-    }
 
     if (scope.props.length && scope.typedVars.length) {
       scope.typedVars.forEach(function (param) {
+        if (!checkNativeTypes && param.format === 'native') return;
         validateBySchema(param, scope, node, context, false);
       });
     }
   }
 }
-
 module.exports = function (context) {
   var settings = context.settings.typelint;
   var schemas = loadSchemas(settings);
   var adapters = (settings && settings.adapters) ? settings.adapters.map(function (adapterName) {
     return require('../adapters/' + adapterName);
   }) : [];
-  console.log(adapters);
   validateBySchema = validateBySchemaConstructor(schemas, adapters);
   return {
-    MemberExpression: handleMemberExpressions.bind(null, context)
+    MemberExpression: handleMemberExpressions.bind(null, context),
   };
 };

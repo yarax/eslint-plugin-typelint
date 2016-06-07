@@ -3,7 +3,9 @@ var assert = require('assert');
 
 const getCmd = (file, config) => {
   if (!config) config = '.eslintrc.yml';
-  return `node ${__dirname}/../node_modules/.bin/eslint --rulesdir=${__dirname}/../rules/ -c ${__dirname}/fixtures/${config} ${__dirname}/fixtures/${file}.js`;
+  const cmd = `node ${__dirname}/../node_modules/.bin/eslint --rulesdir=${__dirname}/../rules/ -c ${__dirname}/fixtures/${config} ${__dirname}/fixtures/${file}.js`;
+  console.log(cmd);
+  return cmd;
 }
 
 describe('typelint', function () {
@@ -67,6 +69,16 @@ describe('typelint', function () {
       if (!err) {
         throw new Error('Should throw error');
       }
+      done();
+    });
+  });
+
+  it('Var reassign', (done) => {
+    exec(getCmd('test_reassign'), (err, stdout, stderr) => {
+      if (!err) {
+        throw new Error('Should throw error');
+      }
+      assert(!!stdout.match(/Invalid access to property wrong for type human/), true);
       done();
     });
   });

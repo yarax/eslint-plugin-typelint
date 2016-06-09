@@ -1,4 +1,4 @@
-componentDidMount() {
+const componentDidMount = () => {
   const {screenSizesField, groupScreenSizesField, shops, campaignData} = this.props;
   let campaignScreenSizes = [].concat(screenSizesField.value);
   let groupScreenSizes = [].concat(groupScreenSizesField.value);
@@ -8,9 +8,6 @@ componentDidMount() {
   const checkDoesItHaveMedia = (shopId, screenTypeName, screenObj) => {
     const neededShopCampaign = campaignData.shopCampaigns.find(shopCampaign => shopCampaign.shopId === shopId);
     if (neededShopCampaign.media && neededShopCampaign.media.screenTypes) {
-      /**
-       * @var neededScreenType <campaign.data>
-       */
       const neededScreenType = neededShopCampaign.media.screenTypes.find(scScreenType => scScreenType.name === screenTypeName);
       const neededScreenSize = neededScreenType.lolol;
     }
@@ -18,9 +15,6 @@ componentDidMount() {
   }
 
   shops.forEach(
-    /**
-     * @param shop <shop>
-     */
     shop => {
       shop.data.screensConfig.screenTypes.forEach(screenType => {
         screenType.slots.forEach(slot => {

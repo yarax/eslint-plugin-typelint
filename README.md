@@ -5,7 +5,7 @@ It helps to avoid access to missing properties of object and write more robust c
 
 # Demo
 
-![alt text](http://yarax.ru/images/demo.gif =250x)
+<img src="http://yarax.ru/images/demo.gif" width="400"/>
 
 # License
 

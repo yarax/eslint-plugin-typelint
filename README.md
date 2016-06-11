@@ -80,7 +80,7 @@ Now TypeLint knows, that `movieObject` parameters has type of `movie`
 
 Run
 ```
-eslint .
+./node_modules/.bin/eslint --rulesdir ./node_modules/typelint/rules .
 ```
 
 or enable ESLint tools in your IDE, e.g WebStorm:

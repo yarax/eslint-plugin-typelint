@@ -11,6 +11,9 @@
     no-use-before-define: 0
     global-require: 0
     no-underscore-dangle: 0
+    one-var: 0
+    one-var-declaration-per-line: 0
+    max-len: 0
     typelint: 2
   extends: 'airbnb-base/legacy'
   settings:

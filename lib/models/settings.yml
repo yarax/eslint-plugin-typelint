@@ -1,9 +1,6 @@
 properties:
   lintNative: 'boolean'
-  modelsDirs:
-    type: 'array'
-    items:
-      type: 'string'
+  modelsDir: 'string'
   adapters:
     type: 'array'
     items:

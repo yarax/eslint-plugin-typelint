@@ -20,13 +20,33 @@ describe('typelint', function () {
 
   it('Regular function comments/variable', (done) => {
     exec(getCmd('test'), (err, stdout, stderr) => {
+      if (!err) {
+        throw new Error('Should throw error');
+      }
+      assert(!!stdout.match(/first_Name/), true);
+      done();
+    });
+  });
+
+  it('JSDoc typedef', (done) => {
+    exec(getCmd('test_typedef'), (err, stdout, stderr) => {
+      if (!err) {
+        throw new Error('Should throw error');
+      }
+      assert(!!stdout.match(/first_Name/), true);
+      done();
+    });
+  });
+
+  it.skip('Code in the root scope', (done) => {
+    exec(getCmd('test_root_scope'), (err, stdout, stderr) => {
       if (err || stderr) return done(new Error(stdout));
       done();
     });
   });
 
-  it('Transfer variables, should throw', (done) => {
-    exec(getCmd('test_vars'), (err, stdout, stderr) => {
+  it.skip('Transfer variables, should throw', (done) => {
+    exec(getCmd('test_pass_vars'), (err, stdout, stderr) => {
       if (!err) {
         throw new Error('Should throw error, because wrong member access');
       }

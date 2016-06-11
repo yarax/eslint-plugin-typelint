@@ -1,6 +1,6 @@
 {
   "name": "typelint",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "ESlint rule for optional typing in JavaScript, based on JSDoc",
   "keywords": [
     "jsdoc",

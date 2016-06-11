@@ -3,6 +3,10 @@ var traverseScope = require('../lib/traverse');
 var validateBySchemaConstructor = require('../lib/validation');
 var validateBySchema;
 
+/**
+ * @param {Object} context
+ * @param {Object} node
+ */
 function handleMemberExpressions(context, node) {
   var scope;
   var checkNativeTypes = context.settings.typelint && context.settings.typelint.lintNative;
@@ -20,11 +24,15 @@ function handleMemberExpressions(context, node) {
     if (scope.props.length && scope.typedVars.length) {
       scope.typedVars.forEach(function (param) {
         if (!checkNativeTypes && param.format === 'native') return;
-        validateBySchema(param, scope, node, context, false);
+        validateBySchema(param, scope, node, context, param.format);
       });
     }
   }
 }
+/**
+ * @param {Object} context
+ * @returns {{MemberExpression: (function)}}
+ */
 module.exports = function (context) {
   var settings = context.settings.typelint;
   var schemas = loadSchemas(settings);

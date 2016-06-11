@@ -4,6 +4,5 @@
  * @param {Boolean} flag
  * @returns {number}
  */
-function test(man, flag) {
-    var zoko = man.first_Name;
-}
+var man = require('fdgd');
+var zoko = man.firrstName;

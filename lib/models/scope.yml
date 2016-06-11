@@ -2,6 +2,11 @@ properties:
   props:
     items:
       type: 'string'
+  init:
+    type: 'object'
+    properties:
+      start: 'number'
+      end: 'number'
   typedVars:
     items:
       type: 'string'

@@ -10,6 +10,6 @@ properties:
       type: 'string'
   excludeModelDirs:
     type: 'array'
-      items:
-        type: 'string'
+    items:
+      type: 'string'
   useCache: 'boolean'

@@ -3,6 +3,10 @@ var traverseScope = require('../lib/traverse');
 var validateBySchemaConstructor = require('../lib/validation');
 var validateBySchema;
 
+/**
+ * @param {Object} context
+ * @param {Object} node
+ */
 function handleMemberExpressions(context, node) {
   var scope;
   var checkNativeTypes = context.settings.typelint && context.settings.typelint.lintNative;
@@ -25,6 +29,10 @@ function handleMemberExpressions(context, node) {
     }
   }
 }
+/**
+ * @param {Object} context
+ * @returns {{MemberExpression: (function)}}
+ */
 module.exports = function (context) {
   var settings = context.settings.typelint;
   var schemas = loadSchemas(settings);

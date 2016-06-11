@@ -52,6 +52,14 @@ or enable ESLint tools in your IDE, e.g WebStorm:
 
 <img src="http://yarax.ru/images/wslint.gif" width="600"/>
 
+# What it is and what it is not 
+
+TypeLint is a helper, but not a full-fledged typed system for js. If you want to make your
+code 100% typed, please use any of existing static typed languages, which can be transpiled to JavaScript (TypeScript, Flow etc)
+The goal of TypeLint is to help developer avoid `undefined` errors, but optionally and staying all the speed and flexibility of JavaScript developemnt.
+
+`BTW` TypeLint was written with help of TypeLint  
+
 # All eslinrc options
 
 * lintNative - {Bolean} should TypeLint check native JS types, defined by ususal JSDoc notation

@@ -11,8 +11,7 @@ const getCmd = (file, config) => {
 describe('typelint', function () {
 
   it('Run with default config without settings', (done) => {
-    console.log(getCmd('test', '.simple.yml'));
-    exec(getCmd('test', '.simple.yml'), (err, stdout, stderr) => {
+    exec(getCmd('test_empty', '.simple.yml'), (err, stdout, stderr) => {
       if (err || stderr) return done(new Error(stdout));
       done();
     });
@@ -29,7 +28,7 @@ describe('typelint', function () {
   });
 
   it('JSDoc typedef', (done) => {
-    exec(getCmd('test_typedef'), (err, stdout, stderr) => {
+    exec(getCmd('test'), (err, stdout, stderr) => {
       if (!err) {
         throw new Error('Should throw error');
       }

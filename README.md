@@ -32,7 +32,7 @@ To bind your models to TypeLint, put the following settings block to the root of
 # Usage
 
 ```
-npm i typelint
+npm i eslint && npm i typelint
 ```
 
 Put `typelint` rule to your .eslintrc with needed priority (2 is recommended).

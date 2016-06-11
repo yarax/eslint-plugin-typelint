@@ -29,6 +29,15 @@ To bind your models to TypeLint, put the following settings block to the root of
   },
 ```
 
+Models are expected as files, where each of them is module exporting one definition.
+
+Name of the file is a name of the model.
+
+Supported formats:
+* JSON
+* YAML
+* JS files as common.js modules (export object is a schema)
+
 # Usage
 
 ```

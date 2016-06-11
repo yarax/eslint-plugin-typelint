@@ -1,11 +1,12 @@
 {
   "name": "typelint",
   "version": "1.0.1",
-  "description": "",
+  "description": "ESlint rule for optional typing in JavaScript, based on JSDoc",
   "keywords": [
     "jsdoc",
     "eslint",
-    "types"
+    "types",
+    "js typing"
   ],
   "scripts": {
     "test": "./node_modules/.bin/mocha"
@@ -17,7 +18,6 @@
     "js-yaml": "^3.6.1"
   },
   "devDependencies": {
-    "babel-eslint": "^6.0.4",
     "eslint": "^2.11.1",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-config-airbnb-base": "^3.0.1",

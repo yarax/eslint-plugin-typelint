@@ -1,8 +1,8 @@
 # TypeLint
 
-TypeLint is an ESlint rule for optional typing in JavaScript, based on JSDoc.
-TypeLint provides optional typings to your code, not forcing you to write new definitions.
-It helps to avoid access to missing properties of object and write more robust code.
+TypeLint is an [ESlint](http://eslint.org) rule for optional typing in JavaScript, based on [JSDoc](http://usejsdoc.org/).
+
+TypeLint provides optional typing for your code, not forcing you to write new definitions.
 
 # Demo
 
@@ -11,10 +11,15 @@ It helps to avoid access to missing properties of object and write more robust c
 # Features
 
 Currently TypeLint supports JSON Schema for describing data shapes.
-JSON Schema is advanced, popular and well documented format for describing JSON data.
-For example if you use Swagger for your API, you already have JSON Schema definitions, that you can use.
-Also you can bind Mongoose schemas using TypeLint adapters.
-To bind your models to TypeLint, put the following settings block to to root of your .eslintrc:
+
+[JSON Schema](http://json-schema.org/) is advanced, popular and well documented format for describing JSON data.
+
+
+For example if you use [Swagger](http://swagger.io/) for your API, you already have JSON Schema definitions, that you can use.
+
+Also you can bind [Mongoose](http://mongoosejs.com) schemas using TypeLint adapters.
+
+To bind your models to TypeLint, put the following settings block to the root of your .eslintrc:
 
 ```js
   "settings": {
@@ -30,9 +35,30 @@ To bind your models to TypeLint, put the following settings block to to root of 
 npm i typelint
 ```
 
-Put `typelint` rule to your .eslintrc with needed priority (2 is recommended)
+Put `typelint` rule to your .eslintrc with needed priority (2 is recommended).
 
-Extend your JSDoc comments with TypeLint notations:
+For example, your .eslintrc can look as following:
+```js
+{
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "rules": {
+    "no-console": 0,
+    "no-param-reassign": 2,
+    "typelint": 2
+  },
+  "settings": {
+    "typelint" : {
+      "modelsDir": "./models/swagger"
+    }
+  }
+}
+
+```
+
+Extend your JSDoc comments with TypeLint notations `<typeName>`:
 
 ```js
 /**
@@ -43,30 +69,32 @@ function getDirector(movieObject) {
 ```
 Now TypeLint knows, that `movieObject` parameters has type of `movie`
 
-Run 
+Run
 ```
-eslint
+eslint .
 ```
 
 or enable ESLint tools in your IDE, e.g WebStorm:
 
-<img src="http://yarax.ru/images/wslint.gif" width="600"/>
+<img src="http://yarax.ru/images/wslint.png" width="600"/>
 
-# What it is and what it is not 
+# What it is and what it is not
 
-TypeLint is a helper, but not a full-fledged typed system for js. If you want to make your
-code 100% typed, please use any of existing static typed languages, which can be transpiled to JavaScript (TypeScript, Flow etc)
+TypeLint is a helper, but not a full-fledged typed system for js.
+
+If you want to make your code 100% typed, please use any of existing static typed languages, which can be transpiled to JavaScript (TypeScript, Flow etc)
+
 The goal of TypeLint is to help developer avoid `undefined` errors, but optionally and staying all the speed and flexibility of JavaScript developemnt.
 
-`BTW` TypeLint was written with help of TypeLint  
+`BTW` TypeLint was written with help of TypeLint 😊️
 
 # All eslinrc options
 
-* lintNative - {Bolean} should TypeLint check native JS types, defined by ususal JSDoc notation
+* lintNative - {Bolean} should TypeLint check native JS types, defined by ususal JSDoc notation. `Default`: false
 * modelsDir - {String} path to your models dir. Every file is a separate model
 * excludeModelDirs - {Array} array of paths, that models finder should ignore while loading models
 * adapters - {Array} array of adapters (functions in adapters dir) that would transform your models before comparing with real code cases.
-* useCache - {Boolean} caches all models (will work faster, but changes in models will not affect)
+* useCache - {Boolean} caches all models (will work faster, but changes in models will not affect). `Default`: false
 
 # Planned features
 

@@ -41,7 +41,7 @@ Supported formats:
 # Example
 
 ```
-git clone git@github.com:yarax/typelint.git
+git clone https://github.com/yarax/typelint.git
 cd typelint
 npm i
 ./node_modules/.bin/eslint --rulesdir rules/ example/index.js

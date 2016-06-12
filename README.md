@@ -10,7 +10,7 @@ TypeLint provides optional typing for your code, not forcing you to write new de
 
 # Features
 
-Currently TypeLint supports JSON Schema for describing data shapes.
+Currently TypeLint supports JSON Schema for describing data interfaces.
 
 [JSON Schema](http://json-schema.org/) is advanced, popular and well documented format for describing JSON data.
 

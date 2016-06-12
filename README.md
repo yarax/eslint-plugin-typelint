@@ -38,6 +38,15 @@ Supported formats:
 * YAML
 * JS files as common.js modules (export object is a schema)
 
+# Example
+
+```
+git clone git@github.com:yarax/typelint.git
+cd typelint
+npm i
+./node_modules/.bin/eslint --rulesdir rules/ example/index.js
+```
+
 # Usage
 
 ```
@@ -86,15 +95,6 @@ Run
 or enable ESLint tools in your IDE, e.g WebStorm:
 
 <img src="http://yarax.ru/images/wslint.png" width="600"/>
-
-# Example
-
-```
-git clone git@github.com:yarax/typelint.git
-cd typelint
-npm i
-./node_modules/.bin/eslint --rulesdir rules/ example/index.js
-```
 
 # What it is and what it is not
 

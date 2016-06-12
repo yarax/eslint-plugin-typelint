@@ -87,6 +87,15 @@ or enable ESLint tools in your IDE, e.g WebStorm:
 
 <img src="http://yarax.ru/images/wslint.png" width="600"/>
 
+# Example
+
+```
+git clone git@github.com:yarax/typelint.git
+cd typelint
+npm i
+./node_modules/.bin/eslint --rulesdir rules/ example/index.js
+```
+
 # What it is and what it is not
 
 TypeLint is a helper, but not a full-fledged typed system for js.

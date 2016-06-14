@@ -2,7 +2,16 @@
 
 TypeLint is an [ESlint](http://eslint.org) rule for optional typing in JavaScript, based on [JSDoc](http://usejsdoc.org/).
 
-TypeLint provides optional typing for your code, not forcing you to write new definitions.
+Every application manages data, which is usually described in some way.
+
+For example:
+
+* Swagger definitions
+* Mongoose schemas
+* Redux store (reducers folding only)
+* GraphQL schemas
+
+The mission of TypeLint is to provide complex type checking, based on already described data shapes of your app.
 
 # Demo
 

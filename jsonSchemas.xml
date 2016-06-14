@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JsonSchemaMappingsProjectConfiguration">
+    <state>
+      <map>
+        <entry key="campaign">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="campaign" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="*.js" />
+                    <option name="pattern" value="true" />
+                  </Item>
+                </list>
+              </option>
+              <option name="relativePathToSchema" value="node_modules/typelint/cache/models.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+      </map>
+    </state>
+  </component>
+</project>

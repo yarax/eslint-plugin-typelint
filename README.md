@@ -11,7 +11,7 @@ For example:
 * Redux store (reducers folding only)
 * GraphQL schemas
 
-The mission of TypeLint is to provide complex type checking, based on already described data shapes of your app.
+Mission of TypeLint is to provide complex type checking, based on already described data shapes of your app.
 
 # Demo
 

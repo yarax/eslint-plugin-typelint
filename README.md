@@ -53,7 +53,7 @@ Supported formats:
 git clone https://github.com/yarax/typelint.git
 cd typelint
 npm i
-./node_modules/.bin/eslint --rulesdir rules/ example/typelint.js
+./node_modules/.bin/eslint --rulesdir rules/ example/composite.js
 ```
 
 # Usage

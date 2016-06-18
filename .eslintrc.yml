@@ -2,6 +2,9 @@
   env:
     node: true
     es6: true
+  plugins:
+    -
+      typelint
   rules:
     eol-last: 0
     no-trailing-spaces: 0
@@ -15,10 +18,11 @@
     one-var-declaration-per-line: 0
     max-len: 0
     valid-typeof: 2
-    typelint: 2
+    typelint/composite: 2
+    typelint/primitive: 2
   extends: 'airbnb-base/legacy'
   settings:
     typelint:
       lintNative: true
       modelsDir: './lib/models'
-      useCache: false
+      useCache: true

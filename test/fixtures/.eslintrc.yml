@@ -3,8 +3,12 @@
   env:
     node: true
     es6: true
+  plugins:
+    -
+      typelint
   rules:
-    typelint: 2
+    typelint/composite: 2
+    typelint/primitive: 2
   settings:
     typelint:
       lintNative: true

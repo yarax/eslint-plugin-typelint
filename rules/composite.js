@@ -1,15 +1,14 @@
-var loadSchemas = require('../lib/load-schemas');
+var loader = require('../lib/load-schemas');
 var traverseScope = require('../lib/traverse');
-var validateBySchemaConstructor = require('../lib/validation');
+var validation = require('../lib/validation');
 var rule;
 
 /**
- * @param {Function} validateBySchema
  * @param {Object} context
- * @param {Boolean} checkNativeTypes
+ * @param {String} typeCheckKind primitive|composite
  * @return {Function}
  */
-function handleMemberExpressions(validateBySchema, context, checkNativeTypes) {
+function handleMemberExpressions(context, typeCheckKind) {
   return function (node) {
     var scope;
     if (node.object && node.object.name) {
@@ -25,12 +24,11 @@ function handleMemberExpressions(validateBySchema, context, checkNativeTypes) {
 
       if (scope.props.length && scope.typedVars.length) {
         scope.typedVars.forEach(function (param) {
-          if (!checkNativeTypes && param.format === 'native') return;
-          validateBySchema(param, scope, node, context, param.format);
+          validation.validateBySchema(param, scope, node, context, typeCheckKind);
         });
       }
     }
-  }
+  };
 }
 
 /**
@@ -39,13 +37,13 @@ function handleMemberExpressions(validateBySchema, context, checkNativeTypes) {
  */
 rule = function (context) {
   var settings = context.settings.typelint;
-  var schemas = loadSchemas(settings);
+  var schemas = loader.loadComposite(settings);
   var adapters = (settings && settings.adapters) ? settings.adapters.map(function (adapterName) {
     return require('../adapters/' + adapterName);
   }) : [];
-  var validateBySchema = validateBySchemaConstructor(schemas, adapters);
+  validation.addSchemas('composite', schemas);
   return {
-    MemberExpression: handleMemberExpressions(validateBySchema, context, false),
+    MemberExpression: handleMemberExpressions(context, 'composite'),
   };
 };
 

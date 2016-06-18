@@ -1,13 +1,15 @@
 var composite = require('./composite');
-var validateBySchemaConstructor = require('../lib/validation');
+var loader = require('../lib/load-schemas');
+var validation = require('../lib/validation');
 /**
  * @param {Object} context
  * @returns {{MemberExpression: (function)}}
  */
 var rule = function (context) {
-  var validateBySchema = validateBySchemaConstructor({}, []);
+  var schemas = loader.loadPrimitive();
+  validation.addSchemas('primitive', schemas);
   return {
-    MemberExpression: composite.handleMemberExpressions(validateBySchema, context, false),
+    MemberExpression: composite.handleMemberExpressions(context, 'primitive'),
   };
 };
 

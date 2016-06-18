@@ -1,4 +1,4 @@
 properties:
   varName: 'string'
   varType: 'string'
-  format: 'string'
+  kind: 'string'

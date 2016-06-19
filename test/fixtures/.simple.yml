@@ -3,4 +3,5 @@
     node: true
     es6: true
   rules:
-    typelint: 2
+    typelint/composite: 2
+    typelint/primitive: 2

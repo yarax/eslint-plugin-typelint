@@ -1,5 +1,5 @@
 var composite = require('./composite');
-var loader = require('../lib/load-schemas');
+var loader = require('../lib/schemas/load');
 var validation = require('../lib/validation');
 /**
  * @param {Object} context

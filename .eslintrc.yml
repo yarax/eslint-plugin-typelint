@@ -23,6 +23,8 @@
   extends: 'airbnb-base/legacy'
   settings:
     typelint:
-      lintNative: true
-      modelsDir: './lib/models'
-      useCache: true
+      models:
+        json:
+          dir: 'models'
+        middlewares: ['./middlewares/to-camel-case']
+      useCache: false

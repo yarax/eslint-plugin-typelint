@@ -1,0 +1,17 @@
+properties:
+  models:
+    type: 'object'
+    properties:
+      json:
+        type: 'object'
+        proprties:
+          exclude:
+            type: 'array'
+            items:
+              type: 'string'
+    adapters:
+      type: 'array'
+      items:
+        type: 'string'
+
+  useCache: 'boolean'

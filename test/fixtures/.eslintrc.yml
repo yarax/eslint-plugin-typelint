@@ -10,9 +10,8 @@
     typelint/composite: 2
     typelint/primitive: 2
   settings:
-    typelint:
-      lintNative: true
-      modelsDir: './test/fixtures/models'
-      adapters: ['to_snake_case']
-      nestedSubDir: '/v1/definitions'
-      useCache: false
+      typelint:
+        models:
+          json:
+            dir: './test/fixtures/models'
+        useCache: false

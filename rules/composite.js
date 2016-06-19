@@ -1,4 +1,4 @@
-var loader = require('../lib/load-schemas');
+var loader = require('../lib/schemas/load');
 var traverseScope = require('../lib/traverse');
 var validation = require('../lib/validation');
 var rule;
@@ -38,9 +38,6 @@ function handleMemberExpressions(context, typeCheckKind) {
 rule = function (context) {
   var settings = context.settings.typelint;
   var schemas = loader.loadComposite(settings);
-  var adapters = (settings && settings.adapters) ? settings.adapters.map(function (adapterName) {
-    return require('../adapters/' + adapterName);
-  }) : [];
   validation.addSchemas('composite', schemas);
   return {
     MemberExpression: handleMemberExpressions(context, 'composite'),

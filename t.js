@@ -6,5 +6,5 @@
  */
 function traverseScope(node, scope) {
   var i = 0;
-  var a = scope.typedVars[0];
+  var a = scope.typedVars[i];
 }

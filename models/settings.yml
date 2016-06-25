@@ -13,5 +13,6 @@ properties:
       type: 'array'
       items:
         type: 'string'
+    useCache: 'boolean'
 
   useCache: 'boolean'

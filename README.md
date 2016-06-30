@@ -7,8 +7,8 @@ Every application manages data, which is usually described in some way.
 For example:
 
 * Swagger definitions
-* Mongoose schemas
-* Redux store (reducers folding)
+* JSON based database schemas (MongoDB, RethinkDB, CouchDB etc)
+* Redux store (folded reducers)
 * GraphQL schemas
 
 Mission of TypeLint is to provide complex type checking, based on **already described data structures** of your app.

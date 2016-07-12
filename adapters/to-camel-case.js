@@ -1,4 +1,5 @@
 function convertString(prop) {
+  if (prop === '_id') return '_id';
   return prop.split('_')
     .map(function (part, i) {
       if (!i) return part;

@@ -26,5 +26,5 @@ settings:
     models:
       json:
         dir: 'models'
-      middlewares: ['./middlewares/to-camel-case']
+      adapters: ['./adapters/to-camel-case']
     useCache: false

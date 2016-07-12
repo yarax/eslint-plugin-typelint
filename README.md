@@ -93,13 +93,15 @@ To bind your models to TypeLint, put the following settings block to the root of
 
 ```js
   "settings": {
-      "typelint": {
-          "models": {
-              "json": {
-                  "dir": "./models"
-              }
-          }
+    "typelint": {
+      "models": {
+        "json": {
+          "dir": "./models",
+          "exclude": ["wrong_dir"]
+        },
+        "adapters": ["./node_modules/eslint-plugin-typelint/adapters/to-camel-case"]
       }
+    }
   }
 ```
 
@@ -111,6 +113,10 @@ Supported formats:
 * JSON
 * YAML
 * JS files as common.js modules (export object is a schema)
+
+Adapters can be used for transforming schemas from one format to another.
+There are two already existed adapters: to-camel-case and to-snake-case. They appropriately convert fields of schema.
+You can write you own adapters, using the same interface.
 
 # What it is and what it is not
 

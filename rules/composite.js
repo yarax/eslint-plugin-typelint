@@ -12,6 +12,7 @@ function handleMemberExpressions(context, typeCheckKind) {
   return function (node) {
     var scope;
     if (node.object && node.object.name) {
+
       scope = traverseScope(node, {
         init: {
           start: node.start,

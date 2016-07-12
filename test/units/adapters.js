@@ -1,5 +1,5 @@
-var toCamel = require('../../middlewares/to-camel-case');
-var toSnake = require('../../middlewares/to-snake-case');
+var toCamel = require('../../adapters/to-camel-case');
+var toSnake = require('../../adapters/to-snake-case');
 var json = require('../fixtures/cached-models.json');
 var assert = require('assert');
 

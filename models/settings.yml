@@ -5,14 +5,18 @@ properties:
       json:
         type: 'object'
         proprties:
+          adapters:
+            type: 'array'
+            items:
+              type: 'string'
           exclude:
             type: 'array'
             items:
               type: 'string'
-    adapters:
-      type: 'array'
-      items:
-        type: 'string'
+      redux:
+        type: 'object'
+        properties:
+          reducerPath: 'string'
     useCache: 'boolean'
 
   useCache: 'boolean'

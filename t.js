@@ -1,10 +1,3 @@
-/**
- * Traverses the current scope and collects declarations
- * @param {Object} node
- * @param {Object} scope <scope>
- * @returns {Object} scope
- */
-function traverseScope(node, scope) {
-  var i = 0;
-  var a = scope.typedVars[i];
-}
+var generate = require('./lib/schemas/generator');
+var obj = generate('LOL', {a: {b: [1,2], c: 'erwe'}});
+console.log(require('util').inspect(obj, {depth: null}));

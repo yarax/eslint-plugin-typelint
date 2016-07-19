@@ -26,5 +26,7 @@ settings:
     models:
       json:
         dir: 'models'
-      adapters: ['./adapters/to-camel-case']
+        adapters: ['./adapters/to-camel-case']
+      redux:
+        reducerPath: '/home/roman/frontend/src/client/redux/typelintReducerWrapper.js'
     useCache: false

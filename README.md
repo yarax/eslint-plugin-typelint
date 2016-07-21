@@ -166,7 +166,8 @@ The goal of TypeLint is to help developer avoid `undefined` errors, but optional
 
 * models.json.dir - {String} path to your models dir. Every file is a separate model
 * models.json.exclude - {Array} array of paths, that models finder should ignore while loading models
-* adapters - {Array} array of paths to modules, which exports functions :: yourSchema -> JSONSchema.
+* models.json.adapters - {Array} array of paths to modules, which exports functions :: yourSchema -> JSONSchema.
+* models.redux.reducerPath - {String} Path to the root Redux reducer
 * useCache - {Boolean} caches all models (will work faster, but changes in models will not affect). `Default`: false
 
 See also [settings schema](https://github.com/yarax/typelint/blob/master/models/settings.yml), that TypeLint is using for typing check itself.

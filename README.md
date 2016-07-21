@@ -84,9 +84,13 @@ or enable ESLint tools in your IDE, e.g WebStorm:
 ## Redux state
 
 Redux is a popular state container for React apps.
-It describes state shape as a composition of reducers with theirs initial values.
-Dealing with big and deeply nested stores it's easily to make a mistake with access to a wrong property of state.
-Typelint constructs the Redux schema, based on initial values of reducers, detecting types of certain values.
+
+It describes the state shape as a composition of reducers with theirs initial values.
+
+Dealing with a big and deeply nested store it's easily to make a mistake with access to a wrong property.
+
+Typelint constructs the Redux schema, based on initial values of reducers, detecting types of end values.
+
 To use it, just add the redux option to settings.typelint.models section of .eslintrc with path to your root reducer:
 
 ```
@@ -169,7 +173,6 @@ See also [settings schema](https://github.com/yarax/typelint/blob/master/models/
 
 # Planned features
 
-* Support Redux store shape
 * Support GraphQL schemas
 * Possibility to use /*@var*/ definitions everywhere
 * Handle passing typed variables (partially including)

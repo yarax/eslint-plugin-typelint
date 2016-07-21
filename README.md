@@ -152,13 +152,20 @@ Adapters can be used for transforming schemas from one format to another. For ex
 There are two already existed adapters: to-camel-case and to-snake-case. They appropriately convert fields of schema.
 You can write your own adapters, using the same interface.
 
+## Autocomplete
+
+If you use WebStorm/PHPStorm 2016, all TypeLint types are available for autocomplete. Just run in your working directory:
+```
+cp node_modules/eslint-plugin-typelint/jsonSchemas.xml .idea/
+```
+
 # What it is and what it is not
 
 TypeLint is a helper, but not a full-fledged typed system for js.
 
 If you want to make your code 100% typed, please use any of existing static typed languages, which can be transpiled to JavaScript (TypeScript, Flow etc)
 
-The goal of TypeLint is to help developer avoid `undefined` errors, but optionally and staying all the speed and flexibility of pure JavaScript developement.
+The purpose of TypeLint is to help developer avoid `undefined` errors, but optionally and staying all the speed and flexibility of pure JavaScript developement.
 
 `BTW` TypeLint was written with help of TypeLint 😊️
 

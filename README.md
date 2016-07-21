@@ -53,10 +53,11 @@ For example, your .eslintrc can look as following:
       }
   }
 }
+```
 
 # Usage
 
-```
+
 
 Extend your JSDoc comments with TypeLint notations `<typeName>`:
 
@@ -80,16 +81,39 @@ or enable ESLint tools in your IDE, e.g WebStorm:
 
 # Features
 
-Currently TypeLint supports JSON Schema for describing data interfaces.
+## Redux state
+
+Redux is a popular state container for React apps.
+It describes state shape as a composition of reducers with theirs initial values.
+Dealing with big and deeply nested stores it's easily to make a mistake with access to a wrong property of state.
+Typelint constructs the Redux schema, based on initial values of reducers, detecting types of certain values.
+To use it, just add the redux option to settings.typelint.models section of .eslintrc with path to your root reducer:
+
+```
+"settings": {
+  "typelint": {
+    "models": {
+      "redux": {
+        "reducerPath": "./src/client/redux/reducer.js"
+      }
+    },
+    "useCache":  true
+  }
+}
+```
+
+After that you can use a new typelint type <ReduxState> in JSDoc comments.
+
+## API/Swagger
+
+TypeLint supports JSON Schema for describing data interfaces.
 
 [JSON Schema](http://json-schema.org/) is advanced, popular and well documented format for describing JSON data.
 
 
-For example if you use [Swagger](http://swagger.io/) for your API, you already have JSON Schema definitions, that you can use.
+For example if you use [Swagger](http://swagger.io/) for API, you already have JSON Schema definitions, that you can use.
 
-Also you can bind [Mongoose](http://mongoosejs.com) schemas using TypeLint adapters.
-
-To bind your models to TypeLint, put the following settings block to the root of your .eslintrc:
+To bind your models to TypeLint, put the json option to settings.typelint.models section of your .eslintrc:
 
 ```js
   "settings": {
@@ -99,7 +123,6 @@ To bind your models to TypeLint, put the following settings block to the root of
           "dir": "./models",
           "exclude": ["wrong_dir"]
         },
-        "adapters": ["./node_modules/eslint-plugin-typelint/adapters/to-camel-case"]
       }
     }
   }
@@ -114,9 +137,16 @@ Supported formats:
 * YAML
 * JS files as common.js modules (export object is a schema)
 
-Adapters can be used for transforming schemas from one format to another.
+Adapters can be used for transforming schemas from one format to another. For example:
+```
+"json": {
+  "dir": "./models",
+  "exclude": ["wrong_dir"],
+  "adapters": ["./node_modules/eslint-plugin-typelint/adapters/to-camel-case"]
+},
+```
 There are two already existed adapters: to-camel-case and to-snake-case. They appropriately convert fields of schema.
-You can write you own adapters, using the same interface.
+You can write your own adapters, using the same interface.
 
 # What it is and what it is not
 

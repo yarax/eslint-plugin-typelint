@@ -15,7 +15,7 @@
                   </Item>
                 </list>
               </option>
-              <option name="relativePathToSchema" value="node_modules/typelint/cache/models.json" />
+              <option name="relativePathToSchema" value="node_modules/eslint-plugin-typelint/cache/models.json" />
             </SchemaInfo>
           </value>
         </entry>

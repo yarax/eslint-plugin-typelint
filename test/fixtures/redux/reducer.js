@@ -13,12 +13,12 @@ var initialState2 = {
 }
 
 
-function test1(state = initialState1, action) {
-  return state
+function test1(state, action) {
+  return initialState1;
 }
 
-function test2(state = initialState2, action) {
-  return state
+function test2(state, action) {
+  return initialState2;
 }
 
 module.exports = combineReducers({

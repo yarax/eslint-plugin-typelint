@@ -53,10 +53,11 @@ For example, your .eslintrc can look as following:
       }
   }
 }
+```
 
 # Usage
 
-```
+
 
 Extend your JSDoc comments with TypeLint notations `<typeName>`:
 
@@ -80,16 +81,43 @@ or enable ESLint tools in your IDE, e.g WebStorm:
 
 # Features
 
-Currently TypeLint supports JSON Schema for describing data interfaces.
+## Redux state
+
+Redux is a popular state container for React apps.
+
+It describes the state shape as a composition of reducers with theirs initial values.
+
+Dealing with a big and deeply nested store it's easily to make a mistake with access to a wrong property.
+
+Typelint constructs the Redux schema, based on initial values of reducers, detecting types of end values.
+
+To use it, just add the redux option to settings.typelint.models section of .eslintrc with path to your root reducer:
+
+```
+"settings": {
+  "typelint": {
+    "models": {
+      "redux": {
+        "reducerPath": "./src/client/redux/reducer.js"
+      }
+    },
+    "useCache":  true
+  }
+}
+```
+
+After that you can use a new typelint type <ReduxState> in JSDoc comments.
+
+## API/Swagger
+
+TypeLint supports JSON Schema for describing data interfaces.
 
 [JSON Schema](http://json-schema.org/) is advanced, popular and well documented format for describing JSON data.
 
 
-For example if you use [Swagger](http://swagger.io/) for your API, you already have JSON Schema definitions, that you can use.
+For example if you use [Swagger](http://swagger.io/) for API, you already have JSON Schema definitions, that you can use.
 
-Also you can bind [Mongoose](http://mongoosejs.com) schemas using TypeLint adapters.
-
-To bind your models to TypeLint, put the following settings block to the root of your .eslintrc:
+To bind your models to TypeLint, put the json option to settings.typelint.models section of your .eslintrc:
 
 ```js
   "settings": {
@@ -99,7 +127,6 @@ To bind your models to TypeLint, put the following settings block to the root of
           "dir": "./models",
           "exclude": ["wrong_dir"]
         },
-        "adapters": ["./node_modules/eslint-plugin-typelint/adapters/to-camel-case"]
       }
     }
   }
@@ -114,9 +141,23 @@ Supported formats:
 * YAML
 * JS files as common.js modules (export object is a schema)
 
-Adapters can be used for transforming schemas from one format to another.
+Adapters can be used for transforming schemas from one format to another. For example:
+```
+"json": {
+  "dir": "./models",
+  "exclude": ["wrong_dir"],
+  "adapters": ["./node_modules/eslint-plugin-typelint/adapters/to-camel-case"]
+},
+```
 There are two already existed adapters: to-camel-case and to-snake-case. They appropriately convert fields of schema.
-You can write you own adapters, using the same interface.
+You can write your own adapters, using the same interface.
+
+## Autocomplete
+
+If you use WebStorm/PHPStorm 2016, all TypeLint types are available for autocomplete. Just run in your working directory:
+```
+cp node_modules/eslint-plugin-typelint/jsonSchemas.xml .idea/
+```
 
 # What it is and what it is not
 
@@ -124,7 +165,7 @@ TypeLint is a helper, but not a full-fledged typed system for js.
 
 If you want to make your code 100% typed, please use any of existing static typed languages, which can be transpiled to JavaScript (TypeScript, Flow etc)
 
-The goal of TypeLint is to help developer avoid `undefined` errors, but optionally and staying all the speed and flexibility of pure JavaScript developement.
+The purpose of TypeLint is to help developer avoid `undefined` errors, but optionally and staying all the speed and flexibility of pure JavaScript developement.
 
 `BTW` TypeLint was written with help of TypeLint 😊️
 
@@ -132,14 +173,14 @@ The goal of TypeLint is to help developer avoid `undefined` errors, but optional
 
 * models.json.dir - {String} path to your models dir. Every file is a separate model
 * models.json.exclude - {Array} array of paths, that models finder should ignore while loading models
-* adapters - {Array} array of paths to modules, which exports functions :: yourSchema -> JSONSchema.
+* models.json.adapters - {Array} array of paths to modules, which exports functions :: yourSchema -> JSONSchema.
+* models.redux.reducerPath - {String} Path to the root Redux reducer
 * useCache - {Boolean} caches all models (will work faster, but changes in models will not affect). `Default`: false
 
 See also [settings schema](https://github.com/yarax/typelint/blob/master/models/settings.yml), that TypeLint is using for typing check itself.
 
 # Planned features
 
-* Support Redux store shape
 * Support GraphQL schemas
 * Possibility to use /*@var*/ definitions everywhere
 * Handle passing typed variables (partially including)

@@ -190,3 +190,5 @@ See also [settings schema](https://github.com/yarax/typelint/blob/master/models/
 # License
 
 MIT.
+
+[![Build Status](https://travis-ci.org/yarax/typelint.svg?branch=master)](https://travis-ci.org/yarax/typelint)

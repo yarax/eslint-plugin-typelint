@@ -199,3 +199,4 @@ See also [settings schema](https://github.com/yarax/typelint/blob/master/models/
 MIT.
 
 [![Build Status](https://travis-ci.org/yarax/typelint.svg?branch=master)](https://travis-ci.org/yarax/typelint)
+[![Codewake](https://www.codewake.com/badges/codewake.svg)](https://www.codewake.com/p/typelint)

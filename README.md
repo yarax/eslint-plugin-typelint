@@ -182,10 +182,12 @@ See also [settings schema](https://github.com/yarax/typelint/blob/master/models/
 # Planned features
 
 * Support GraphQL schemas
-* Possibility to use /*@var*/ definitions everywhere
 * Handle passing typed variables (partially including)
 * Detect when variable was reassigned 
 * Other types of models bindings
+
+[Changelog](https://github.com/yarax/typelint/blob/master/CHANGELOG.md)
+[Article "Optional typing in JavaScript without transpilers"](http://yarax.ru/2016/06/12/typelint/)
 
 # License
 

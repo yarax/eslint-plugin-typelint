@@ -187,6 +187,7 @@ See also [settings schema](https://github.com/yarax/typelint/blob/master/models/
 * Other types of models bindings
 
 [Changelog](https://github.com/yarax/typelint/blob/master/CHANGELOG.md)
+
 [Article "Optional typing in JavaScript without transpilers"](http://yarax.ru/2016/06/12/typelint/)
 
 # License

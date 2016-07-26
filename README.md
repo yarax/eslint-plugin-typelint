@@ -183,7 +183,8 @@ See also [settings schema](https://github.com/yarax/typelint/blob/master/models/
 
 * Full support of JSDoc types
 * Handle passing typed variables (partially including)
-* Detect when variable was reassigned 
+* Detect when variable was reassigned
+* Improve caching and performance
 * Support GraphQL schemas
 * Adapters for Mongoose and Thinky
 * Other types of models bindings

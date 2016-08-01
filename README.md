@@ -181,14 +181,23 @@ See also [settings schema](https://github.com/yarax/typelint/blob/master/models/
 
 # Planned features
 
-* Support GraphQL schemas
-* Possibility to use /*@var*/ definitions everywhere
+* Full support of JSDoc types
 * Handle passing typed variables (partially including)
-* Detect when variable was reassigned 
+* Detect when variable was reassigned
+* Improve caching and performance
+* Support GraphQL schemas
+* Adapters for Mongoose and Thinky
 * Other types of models bindings
+
+[Changelog](https://github.com/yarax/typelint/blob/master/CHANGELOG.md)
+
+[Article "Optional typing in JavaScript without transpilers"](http://yarax.ru/2016/06/12/typelint/)
+
+[Type features comparison: Haskell, TypeScript, Flow, JSDoc, JSON Schema](https://github.com/yarax/typescript-flow-haskell-types-comparison)
 
 # License
 
 MIT.
 
 [![Build Status](https://travis-ci.org/yarax/typelint.svg?branch=master)](https://travis-ci.org/yarax/typelint)
+[![Codewake](https://www.codewake.com/badges/codewake.svg)](https://www.codewake.com/p/typelint)

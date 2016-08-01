@@ -1,0 +1,1 @@
+getValuesWithScreenSizes(campaign.data).totalAis // thinks that totalAis is a prop of campaign.data

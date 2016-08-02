@@ -10,8 +10,8 @@
     typelint/composite: 2
     typelint/primitive: 2
   settings:
-      typelint:
-        models:
-          json:
-            dir: './test/fixtures/models'
-        useCache: false
+    typelint:
+      models:
+        json:
+          dir: './test/fixtures/models'
+      useCache: false

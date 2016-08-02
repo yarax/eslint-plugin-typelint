@@ -39,7 +39,9 @@ describe('typelint', function () {
 
   it.skip('Code in the root scope', (done) => {
     exec(getCmd('root_scope'), (err, stdout, stderr) => {
-      if (err || stderr) return done(new Error(stdout));
+      if (!err) {
+        throw new Error('Should throw error, because wrong member access');
+      }
       done();
     });
   });
@@ -63,15 +65,6 @@ describe('typelint', function () {
   it('Const definition before arrow function', (done) => {
     exec(getCmd('arrays'), (err, stdout, stderr) => {
       if (err || stderr) return done(new Error(stdout));
-      done();
-    });
-  });
-
-  it('@var and internal comments', (done) => {
-    exec(getCmd('internal_comments'), (err, stdout, stderr) => {
-      if (!err) {
-        throw new Error('@var: should throw error, because wrong member access');
-      }
       done();
     });
   });

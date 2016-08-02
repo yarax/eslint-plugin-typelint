@@ -5,6 +5,7 @@ properties:
       json:
         type: 'object'
         proprties:
+          dir: 'string'
           adapters:
             type: 'array'
             items:

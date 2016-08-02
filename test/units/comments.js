@@ -29,7 +29,7 @@ describe('Comments', () => {
     assert.deepEqual(scope, expected);
   });
 
-  it('grab2', () => {
+  it('unions', () => {
     var scope = {
       typedVars: []
     };
@@ -39,7 +39,7 @@ describe('Comments', () => {
         {
           value: `/**
 * Test regular function with parameters
-* @param man <human>
+* @param {(man|woman)|animal} man <human>
 * @param {Boolean} flag
 * @returns {number}
 */`
@@ -47,6 +47,6 @@ describe('Comments', () => {
       ]
     }, scope);
 
-    console.log(scope);
+    assert.deepEqual(scope.typedVars, [ 'man', 'woman', 'animal' ]);
   })
 });

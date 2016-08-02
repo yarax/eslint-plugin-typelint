@@ -23,7 +23,6 @@ function handleMemberExpressions(context, typeCheckKind) {
         nativeVars: [],
       });
 
-      console.log(node.object.name, scope.props);
       if (scope.props.length && scope.typedVars.length) {
         scope.typedVars.forEach(function (param) {
           validation.validateBySchema(param, scope, node, context, typeCheckKind);

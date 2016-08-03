@@ -10,7 +10,7 @@
     "js typing"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/units/* test/code.js"
+    "test": "./node_modules/.bin/mocha test/units/*"
   },
   "author": "",
   "license": "ISC",

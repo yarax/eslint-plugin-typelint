@@ -47,6 +47,6 @@ describe('Comments', () => {
       ]
     }, scope);
 
-    assert.deepEqual(scope.typedVars, [ 'man', 'woman', 'animal' ]);
+    assert.deepEqual(scope.typedVars[0].unions, [ 'man', 'woman', 'animal' ]);
   })
 });

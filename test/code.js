@@ -95,4 +95,14 @@ describe('typelint', function () {
     });
   });
 
+  it('Var reassign', (done) => {
+    exec(getCmd('unions'), (err, stdout, stderr) => {
+      if (!err) {
+        throw new Error('Should throw error');
+      }
+      assert(!!stdout.match(/Invalid access to property wrong for type human|String/), true);
+      done();
+    });
+  });
+
 });

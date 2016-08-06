@@ -1,16 +1,13 @@
 var traverseScope = require('../lib/traverse');
 var validation = require('../lib/validation');
 var rule;
-console.log('LOAD ALL', Date.now());
 /**
  * @param {Object} context
  * @param {String} typeCheckKind primitive|composite
  * @return {Function}
  */
-function handleMemberExpressions(context, typeCheckKind) {
+function handleMemberExpressions(context) {
   return function (node) {
-    console.log('handleMemberExpressions');
-    throw new Error();
     var scope;
     if (node.object && node.object.name) {
 
@@ -27,7 +24,7 @@ function handleMemberExpressions(context, typeCheckKind) {
       if (scope.props.length && scope.typedVars.length) {
         scope.typedVars.some(function (param) {
           if (param.varName === node.object.name) {
-            validation.validateBySchema(param, scope, node, context, typeCheckKind);
+            validation.validate(param, scope, node, context);
             return true;
           }
           return false;
@@ -44,7 +41,7 @@ function handleMemberExpressions(context, typeCheckKind) {
 rule = function (context) {
   validation.addSettings(context.settings.typelint);
   return {
-    MemberExpression: handleMemberExpressions(context, 'composite'),
+    MemberExpression: handleMemberExpressions(context),
   };
 };
 

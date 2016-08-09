@@ -49,4 +49,27 @@ describe('Comments', () => {
 
     assert.deepEqual(scope.typedVars[0].unions, [ 'man', 'woman', 'animal' ]);
   })
+
+  it('objects', () => {
+    var scope = {
+      typedVars: []
+    };
+
+    grabComments({
+      leadingComments: [
+        {
+          value: `/**
+* Test regular function with parameters
+* @param {object} human <human>
+* @param {object} human.education
+* @param {number} human.age
+* @param {object} human.traits
+* @param {number} human.education.years
+*/`
+        }
+      ]
+    }, scope);
+    //console.log(require('util').inspect(scope.typedVars[0].definedTypes, {depth: null}));
+    assert.equal(scope.typedVars[0].definedTypes.human.properties.education.properties.years.type, 'number');
+  })
 });

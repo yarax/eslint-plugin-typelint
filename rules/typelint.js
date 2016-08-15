@@ -6,7 +6,7 @@ var rule;
  * @param {String} typeCheckKind primitive|composite
  * @return {Function}
  */
-function handleMemberExpressions(context) {
+function handleMemberExpressions(context, settings) {
   return function (node) {
     var scope;
     if (node.object && node.object.name) {
@@ -24,7 +24,7 @@ function handleMemberExpressions(context) {
       if (scope.props.length && scope.typedVars.length) {
         scope.typedVars.some(function (param) {
           if (param.varName === node.object.name) {
-            validation.validate(param, scope, node, context);
+            validation.validate(param, scope, node, context, settings);
             return true;
           }
           return false;
@@ -39,9 +39,8 @@ function handleMemberExpressions(context) {
  * @returns {{MemberExpression: (function)}}
  */
 rule = function (context) {
-  validation.addSettings(context.settings.typelint);
   return {
-    MemberExpression: handleMemberExpressions(context),
+    MemberExpression: handleMemberExpressions(context, context.settings.typelint),
   };
 };
 

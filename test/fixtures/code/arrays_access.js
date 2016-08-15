@@ -4,6 +4,6 @@
  * @param {Boolean} flag
  * @returns {number}
  */
-function test(man, friend) {
+function test(man, flag) {
     var len = man.friends.name;
 }

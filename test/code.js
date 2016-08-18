@@ -95,4 +95,24 @@ describe('typelint', function () {
     });
   });
 
+  it('Unions', (done) => {
+    exec(getCmd('unions'), (err, stdout, stderr) => {
+      if (!err) {
+        throw new Error('Should throw error');
+      }
+      assert(!!stdout.match(/Invalid access to property wrong for type human|String/), true);
+      done();
+    });
+  });
+
+  it('Object types', (done) => {
+    exec(getCmd('objects'), (err, stdout, stderr) => {
+      if (!err) {
+        throw new Error('Should throw error');
+      }
+      assert(!!stdout.match(/Invalid access to property wrong for type man/), true);
+      done();
+    });
+  });
+
 });

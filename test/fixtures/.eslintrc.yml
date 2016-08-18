@@ -7,8 +7,7 @@
     -
       typelint
   rules:
-    typelint/composite: 2
-    typelint/primitive: 2
+    typelint/typelint: 2
   settings:
     typelint:
       models:

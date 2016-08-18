@@ -1,10 +1,11 @@
 /**
  * Test regular function with parameters
- * @param man <human>
+ * @param {(human|String)} man
  * @param {Boolean} flag
  * @returns {number}
  */
 function test(man, flag) {
-    var len = man.friends.length;
-    var map = man.friends.map(friend => friend.name);
+  var zoko = man.first_name;
+  zoko = man.toUpperCase();
+  zoko = man.wrong;
 }

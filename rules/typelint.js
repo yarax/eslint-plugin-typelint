@@ -1,14 +1,12 @@
-var loader = require('../lib/schemas/load');
 var traverseScope = require('../lib/traverse');
 var validation = require('../lib/validation');
 var rule;
-
 /**
  * @param {Object} context
  * @param {String} typeCheckKind primitive|composite
  * @return {Function}
  */
-function handleMemberExpressions(context, typeCheckKind) {
+function handleMemberExpressions(context, settings) {
   return function (node) {
     var scope;
     if (node.object && node.object.name) {
@@ -24,8 +22,12 @@ function handleMemberExpressions(context, typeCheckKind) {
       });
 
       if (scope.props.length && scope.typedVars.length) {
-        scope.typedVars.forEach(function (param) {
-          validation.validateBySchema(param, scope, node, context, typeCheckKind);
+        scope.typedVars.some(function (param) {
+          if (param.varName === node.object.name) {
+            validation.validate(param, scope, node, context, settings);
+            return true;
+          }
+          return false;
         });
       }
     }
@@ -37,11 +39,8 @@ function handleMemberExpressions(context, typeCheckKind) {
  * @returns {{MemberExpression: (function)}}
  */
 rule = function (context) {
-  var settings = context.settings.typelint;
-  var schemas = loader.loadComposite(settings);
-  validation.addSchemas('composite', schemas);
   return {
-    MemberExpression: handleMemberExpressions(context, 'composite'),
+    MemberExpression: handleMemberExpressions(context, context.settings.typelint),
   };
 };
 

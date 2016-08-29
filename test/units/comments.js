@@ -72,4 +72,23 @@ describe('Comments', () => {
     //console.log(require('util').inspect(scope.typedVars[0].definedTypes, {depth: null}));
     assert.equal(scope.typedVars[0].definedTypes.human.properties.education.properties.years.type, 'number');
   })
+
+  it('nested objects', () => {
+    var scope = {
+      typedVars: []
+    };
+
+    grabComments({
+      leadingComments: [
+        {
+          value: `/**
+* Test regular function with parameters
+* @param {{a: number, b: {c: string}}} varname
+*/`
+        }
+      ]
+    }, scope);
+    console.log(require('util').inspect(scope.typedVars[0].definedTypes, {depth: null}));
+    assert.equal(scope.typedVars[0].definedTypes.varname.properties.b.c, 'string');
+  })
 });

@@ -1,4 +1,5 @@
 var grabComments = require('../../lib/comments');
+var config = require('../../lib/config');
 var assert = require('assert');
 
 describe('Comments', () => {
@@ -77,7 +78,9 @@ describe('Comments', () => {
     var scope = {
       typedVars: []
     };
-
+    config.settings = {
+      models: {json: {dir: 'models'}}
+    };
     grabComments({
       leadingComments: [
         {
@@ -88,7 +91,7 @@ describe('Comments', () => {
         }
       ]
     }, scope);
-    console.log(require('util').inspect(scope.typedVars[0].definedTypes, {depth: null}));
-    assert.equal(scope.typedVars[0].definedTypes.varname.properties.b.c, 'string');
+    //console.log(require('util').inspect(scope.typedVars[0], {depth: null}));
+    assert.equal(scope.typedVars[0].varDefinedType.properties.b.properties.c, 'string');
   })
 });

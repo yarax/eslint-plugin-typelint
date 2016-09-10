@@ -6,6 +6,7 @@ properties:
         type: 'object'
         proprties:
           dir: 'string'
+          swagger: 'string'
           adapters:
             type: 'array'
             items:

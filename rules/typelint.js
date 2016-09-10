@@ -1,16 +1,18 @@
 var traverseScope = require('../lib/traverse');
 var validation = require('../lib/validation');
+var config = require('../lib/config');
 var rule;
 /**
  * @param {Object} context
- * @param {String} typeCheckKind primitive|composite
+ * @param {settings} settings
  * @return {Function}
  */
 function handleMemberExpressions(context, settings) {
   return function (node) {
     var scope;
     if (node.object && node.object.name) {
-
+      // memoize settings
+      config.settings = settings;
       scope = traverseScope(node, {
         init: {
           start: node.start,
@@ -24,7 +26,7 @@ function handleMemberExpressions(context, settings) {
       if (scope.props.length && scope.typedVars.length) {
         scope.typedVars.some(function (param) {
           if (param.varName === node.object.name) {
-            validation.validate(param, scope, node, context, settings);
+            validation.validate(param, scope, node, context);
             return true;
           }
           return false;

@@ -1,4 +1,5 @@
 var grabComments = require('../../lib/comments');
+var config = require('../../lib/config');
 var assert = require('assert');
 
 describe('Comments', () => {
@@ -71,5 +72,26 @@ describe('Comments', () => {
     }, scope);
     //console.log(require('util').inspect(scope.typedVars[0].definedTypes, {depth: null}));
     assert.equal(scope.typedVars[0].definedTypes.human.properties.education.properties.years.type, 'number');
+  })
+
+  it('nested objects', () => {
+    var scope = {
+      typedVars: []
+    };
+    config.settings = {
+      models: {json: {dir: 'models'}}
+    };
+    grabComments({
+      leadingComments: [
+        {
+          value: `/**
+* Test regular function with parameters
+* @param {{a: number, b: {c: string}}} varname
+*/`
+        }
+      ]
+    }, scope);
+    //console.log(require('util').inspect(scope.typedVars[0], {depth: null}));
+    assert.equal(scope.typedVars[0].varDefinedType.properties.b.properties.c, 'string');
   })
 });

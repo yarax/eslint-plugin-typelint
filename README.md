@@ -22,7 +22,7 @@ See also [Typelint example project](https://github.com/yarax/typelint-example)
 # Installation
 
 ```
-npm i eslint && npm i eslint-plugin-typelint
+npm i eslint eslint-plugin-typelint
 ```
 
 `If you use eslint globally, you should install typelint globally as well.`
@@ -34,7 +34,7 @@ Put typelint to eslint plugins array and add rule `typelint/typelint`
 All types are compatible with JSDoc and Closure Compiler. See [http://eslint.org/doctrine/demo/](http://eslint.org/doctrine/demo/) for examples
 
 * `@param {TypeName} varName` Where TypeName is previously defined type. See type definition section below.
-* `@param {[TypeName]}` varName` Array of type TypeName
+* `@param {[TypeName]} varName` Array of type TypeName
 * `@param {{a: String, b: {c: [Number]}}}` Nested record types
 * `@param {TypeName1|TypeName2}` Union types
 

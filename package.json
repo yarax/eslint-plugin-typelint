@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babel-register": "^6.9.0",
+    "babel-register": "^6.16.3",
     "doctrine": "^1.2.2",
     "eslint": "^3.6.0",
     "js-yaml": "^3.6.1",

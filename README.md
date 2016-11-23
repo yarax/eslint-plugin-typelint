@@ -1,6 +1,6 @@
 # TypeLint
 
-TypeLint is an [ESlint](http://eslint.org) plugin for optional typing in JavaScript, based on [JSDoc](http://usejsdoc.org/).
+TypeLint is an [ESlint](http://eslint.org) plugin for static type checking in JavaScript, based on [JSDoc](http://usejsdoc.org/).
 
 Every application manages data, which is usually described in some way.
 

@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-typelint",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "lib/index",
   "description": "ESlint rule for optional typing in JavaScript, based on JSDoc",
   "keywords": [
@@ -24,7 +24,7 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-stage-0": "^6.5.0",
-    "eslint": "^3.0.1",
+    "eslint": "^3.13.1",
     "eslint-config-airbnb": "12.0.0",
     "eslint-config-airbnb-base": "8.0.0",
     "eslint-plugin-import": "^1.8.1",

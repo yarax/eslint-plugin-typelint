@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-typelint",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "lib/index",
   "description": "ESlint rule for optional typing in JavaScript, based on JSDoc",
   "keywords": [

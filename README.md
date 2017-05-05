@@ -15,7 +15,7 @@ Mission of TypeLint is to provide complex type checking, based on **already desc
 
 # Demo
 
-<img src="https://ibb.co/c48jd5" width="600"/>
+<img src="https://image.ibb.co/f2bsWQ/typelint.gif" width="600"/>
 
 See also [Typelint example project](https://github.com/yarax/typelint-example)
 

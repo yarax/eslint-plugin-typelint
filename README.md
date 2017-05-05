@@ -15,7 +15,7 @@ Mission of TypeLint is to provide complex type checking, based on **already desc
 
 # Demo
 
-<img src="http://yarax.ru/images/typelint.gif" width="600"/>
+<img src="https://ibb.co/c48jd5" width="600"/>
 
 See also [Typelint example project](https://github.com/yarax/typelint-example)
 
@@ -153,7 +153,7 @@ The purpose of TypeLint is to help developer avoid `undefined` errors, but optio
 
 [Changelog](https://github.com/yarax/typelint/blob/master/CHANGELOG.md)
 
-[Article "Optional typing in JavaScript without transpilers"](http://yarax.ru/2016/06/12/typelint/)
+[Article "Optional typing in JavaScript without transpilers"](https://medium.com/@raxwunter/optional-typing-in-javascript-without-transpilers-1f819d622a3a)
 
 [Type features comparison: Haskell, TypeScript, Flow, JSDoc, JSON Schema](https://github.com/yarax/typescript-flow-haskell-types-comparison)
 

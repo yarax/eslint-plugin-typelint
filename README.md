@@ -162,4 +162,3 @@ The purpose of TypeLint is to help developer avoid `undefined` errors, but optio
 MIT.
 
 [![Build Status](https://travis-ci.org/yarax/eslint-plugin-typelint.svg?branch=master)](https://travis-ci.org/yarax/eslint-plugin-typelint)
-[![Codewake](https://www.codewake.com/badges/codewake.svg)](https://www.codewake.com/p/typelint)
